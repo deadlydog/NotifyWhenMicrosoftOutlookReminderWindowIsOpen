@@ -1,4 +1,4 @@
-# Notify When Microsoft Outlook Remind Window Is Open
+# Notify When Microsoft Outlook Reminder Window Is Open
 
 ## The Problem
 
