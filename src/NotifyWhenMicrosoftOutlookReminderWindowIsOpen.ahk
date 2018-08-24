@@ -48,8 +48,7 @@ loop
 
 	; Wait for the window to close and clear any remaining notifications about the window having appeared.
 	WinWaitClose, %OutlookRemindersWindowTitleTextToMatch%, ,30
-	HideToolTip()
-	RestoreDefaultMouseCursors()
+	ClearNotifications()
 }
 
 ;==========================================================
@@ -182,6 +181,12 @@ ShowToolTip(textToDisplay, numberOfMillisecondsToShowToolTipFor)
 {
 	ToolTip, %textToDisplay%,,,
 	SetTimer, HideToolTip, -%numberOfMillisecondsToShowToolTipFor%	; Only show the tooltip for the specified amount of time.
+}
+
+ClearNotifications()
+{
+	HideToolTip()
+	RestoreDefaultMouseCursors()
 }
 
 HideToolTip()
