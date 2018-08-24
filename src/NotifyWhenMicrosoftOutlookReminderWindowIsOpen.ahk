@@ -121,7 +121,7 @@ ApplyStartupSettings(settings)
 {
 	ShowAHKScriptIconInSystemTray(settings.ShowIconInSystemTray)
 
-	if (Settings.ShowTrayTipOnStartup)
+	if (Settings.ShowWindowsNotificationOnStartup)
 	{
 		ShowTrayTip("Notify When Microsoft Outlook Reminder Window Is Open", "Now monitoring for the Outlook Reminders window to appear", false)
 	}
