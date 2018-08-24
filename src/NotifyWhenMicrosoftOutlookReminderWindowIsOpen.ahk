@@ -8,40 +8,87 @@ SettingsFilePath := A_ScriptDir . "\NotifyWhenMicrosoftOutlookReminderWindowIsOp
 ;==========================================================
 ; Settings - Specify the default settings, then load any existing settings from the settings file.
 ;==========================================================
-Settings := {}
-Settings.FirstRunSoPromptUserToViewSettingsFile := true
+Settings := {}	; Objects can be accessed with both associated array syntax (brackets) and object syntax (dots).
+Settings.PromptUserToViewSettingsFileOnStartup := false
 Settings.ShowIconInSystemTray := true
-Settings.ShowTrayTipOnStartup := true
+Settings.ShowWindowsNotificationOnStartup := true
+Settings.ShowWindowsNotificationAlert := true
+Settings.PlaySoundOnWindowsNotificationAlert := true
+Settings.ShowTooltipAlert := true
+Settings.MillisecondsToShowTooltipAlertFor := 4000
+Settings.ShowMouseCursorAlert := true
 Settings := LoadSettingsFromFileIfExistsOrCreateFile(SettingsFilePath, Settings)
+
+;==========================================================
+; Startup
+;==========================================================
+if (Settings.PromptUserToViewSettingsFileOnStartup)
+{
+	Settings = PromptUserToAdjustSettings(settingsFilePath, Settings)
+}
+
+ApplyStartupSettings(Settings)
+CreateMouseCursorImageFileIfItDoesNotExist(BellMouseCursorImageFilePath)
+SetTitleMatchMode 2	; Use "title contains text" mode to match windows.
+
+;==========================================================
+; Main Loop
+;==========================================================
+loop
+{
+	; Wait for the window to appear.
+	WinWait, %OutlookRemindersWindowTitleTextToMatch%,
+
+	; Now that the window has appeared, make sure it is visible.
+	WinSet, AlwaysOnTop, on, %OutlookRemindersWindowTitleTextToMatch%	; Set window to always be on top.
+	WinRestore, %OutlookRemindersWindowTitleTextToMatch%	; Restore the window if it's minimzed.
+
+	; Display any notifications about the window appearing.
+	TriggerNotifications(settings)
+
+	; Wait for the window to close and clear any remaining notifications about the window having appeared.
+	WinWaitClose, %OutlookRemindersWindowTitleTextToMatch%, ,30
+	HideToolTip()
+	RestoreDefaultMouseCursors()
+}
+
+;==========================================================
+; Functions
+;==========================================================
 
 LoadSettingsFromFileIfExistsOrCreateFile(settingsFilePath, settings)
 {
-	; If the file exists, read in its contents and then delete it.
+	settingsFileAlreadyExisted := true
+
+	; If the settings file exists, read it's contents into the settings object.
 	If (FileExist(settingsFilePath))
 	{
-		; Read in each line of the file.
-		Loop, Read, %settingsFilePath%
-		{
-			; Split the string at the '=' sign.
-			StringSplit, settingLine, A_LoopReadLine, =
-
-			; If this is a valid setting line (i.e. it has 2 parts; setting=value).
-			if (settingLine0 = 2)
-			{
-				settingName := settingLine1
-				settingValue := settingLine2
-				settings[%settingName%] = %settingValue%
-			}
-		}
+		settings = LoadSettingsFromFile(settingsFilePath, settings)
+	}
+	else
+	{
+		settingsFileAlreadyExisted := false
 	}
 
 	; Save the settings after loading them in order to make sure the settings file is created if it doesn't exist, and so any new settings added in a new version get written to the file.
 	SaveSettingsToFile(settingsFilePath, settings)
 
-	; Apply any applicable settings.
-	ShowAHKScriptInSystemTray(settings.ShowIconInSystemTray)
+	; The settings file did not previously exist, so the user likely has not seen the settings yet, so mark that we should prompt them to view them.
+	if (!settingsFileAlreadyExisted)
+	{
+		settings.PromptUserToViewSettingsFileOnStartup := true
+	}
 
 	; Return the settings that were loaded.
+	return settings
+}
+
+LoadSettingsFromFile(settingsFilePath, settings)
+{
+	for key, value in settings
+	{
+		IniRead, settings[%key%], settingsFilePath, "Settings - For toggle settings 0 = false/no/off and 1 = true/yes/on", key, settings[%key%]
+	}
 	return settings
 }
 
@@ -56,43 +103,30 @@ SaveSettingsToFile(settingsFilePath, settings)
 	; Write the settings to the file (will be created automatically if needed).
 	for key, value in settings
 	{
-		FileAppend, %key%=%value%`n, %settingsFilePath%
+		IniWrite, %value%, %settingsFilePath%, "Settings - For toggle settings 0 = false/no/off and 1 = true/yes/on", %key%
 	}
 }
 
-
-;==========================================================
-; Startup
-;==========================================================
-
-CreateMouseCursorImageFileIfItDoesNotExist(BellMouseCursorImageFilePath)
-TrayTip Script, Now monitoring for the Outlook Reminders window to appear, , 16
-SetTitleMatchMode 2	; Use "title contains text" mode to match windows.
-
-;==========================================================
-; Main Loop
-;==========================================================
-loop
+PromptUserToAdjustSettings(settingsFilePath, settings)
 {
-	; Wait for the window to appear.
-	WinWait, %OutlookRemindersWindowTitleTextToMatch%,
+	MsgBox, 4, 32, "Open Settings File?", "It seems this is the first time launching the Notify When Microsoft Outlook Reminder Window Is Open application. Would you like to view the settings file at '%settingsFilePath%' now to make changes to it?"
 
-	; Display any notifications about the window appearing.
-	WinSet, AlwaysOnTop, on, %OutlookRemindersWindowTitleTextToMatch%	; Set window to always be on top.
-	WinRestore, %OutlookRemindersWindowTitleTextToMatch%	; Restore the window if it's minimzed
-	TrayTip, Outlook Reminder, You have an outlook reminder open, , 16
-	ShowToolTip("You have an outlook reminder open.", 5000)
-	SetSystemMouseCursor(BellMouseCursorImageFilePath)
-
-	; Wait for the window to close and clear any remaining notifications about the window having appeared.
-	WinWaitClose, %OutlookRemindersWindowTitleTextToMatch%, ,30
-	HideToolTip()
-	RestoreDefaultMouseCursors()
+	IfMsgBox, Yes
+	{
+		RunWait, edit %settingsFilePath%
+		settings = LoadSettingsFromFile(settingsFilePath, settings)
+	}
 }
 
-;==========================================================
-; Functions
-;==========================================================
+ApplyStartupSettings(settings)
+{
+	ShowAHKScriptIconInSystemTray(settings.ShowIconInSystemTray)
+
+	if (Settings.ShowTrayTipOnStartup)
+	{
+		ShowTrayTip("Notify When Microsoft Outlook Reminder Window Is Open", "Now monitoring for the Outlook Reminders window to appear", false)
+	}
+}
 
 CreateMouseCursorImageFileIfItDoesNotExist(bellMouseCursorImageFilePath)
 {
@@ -102,7 +136,7 @@ CreateMouseCursorImageFileIfItDoesNotExist(bellMouseCursorImageFilePath)
 	}
 }
 
-ShowAHKScriptInSystemTray(showIconInSystemTray)
+ShowAHKScriptIconInSystemTray(showIconInSystemTray)
 {
 	; If we should show the Tray Icon.
 	if (showIconInSystemTray)
@@ -116,10 +150,38 @@ ShowAHKScriptInSystemTray(showIconInSystemTray)
 	}
 }
 
+TriggerNotifications(settings)
+{
+	if (settings.ShowWindowsNotificationAlert)
+	{
+		ShowTrayTip("Outlook Reminder", "You have an Outlook reminder open", settings.PlaySoundOnWindowsNotificationAlert)
+	}
+
+	if (settings.ShowTooltipAlert)
+	{
+		ShowToolTip("You have an outlook reminder open", settings.MillisecondsToShowTooltipAlertFor)
+	}
+
+	if (settings.ShowMouseCursorAlert)
+	{
+		SetSystemMouseCursor(BellMouseCursorImageFilePath)
+	}
+}
+
+ShowTrayTip(title, message, playSound)
+{
+	trayTipOptions := 0
+	if (!playSound)
+	{
+		trayTipOptions := 16
+	}
+	TrayTip, %title%, %message%, , %trayTipOptions%
+}
+
 ShowToolTip(textToDisplay, numberOfMillisecondsToShowToolTipFor)
 {
 	ToolTip, %textToDisplay%,,,
-	SetTimer, HideToolTip, -%numberOfMillisecondsToShowToolTipFor%	; Only show the tooltip for the specified amount of time
+	SetTimer, HideToolTip, -%numberOfMillisecondsToShowToolTipFor%	; Only show the tooltip for the specified amount of time.
 }
 
 HideToolTip()
