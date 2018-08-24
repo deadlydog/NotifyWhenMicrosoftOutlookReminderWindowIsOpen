@@ -109,7 +109,7 @@ SaveSettingsToFile(settingsFilePath, settings)
 
 PromptUserToAdjustSettings(settingsFilePath, settings)
 {
-	MsgBox, 4, 32, "Open Settings File?", "It seems this is the first time launching the Notify When Microsoft Outlook Reminder Window Is Open application. Would you like to view the settings file at '%settingsFilePath%' now to make changes to it?"
+	MsgBox, 36, Open Settings File?, It seems this is the first time launching the Notify When Microsoft Outlook Reminder Window Is Open application.`n`nWould you like to view the settings file now to make changes to it?`n`n%settingsFilePath%
 
 	IfMsgBox, Yes
 	{
