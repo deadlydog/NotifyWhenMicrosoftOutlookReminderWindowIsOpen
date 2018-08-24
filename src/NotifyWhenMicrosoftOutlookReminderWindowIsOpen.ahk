@@ -1,6 +1,63 @@
 ;==========================================================
-; How to replace curosr: https://autohotkey.com/board/topic/32608-changing-the-system-cursor/
+; Hard-coded Variables
 ;==========================================================
+BellMouseCursorImageFilePath := A_ScriptDir . "\bell.ani"	; Define where to unpack the mouse cursor image file to.
+OutlookRemindersWindowTitleTextToMatch := "Reminder(s)"
+
+;==========================================================
+; Startup
+;==========================================================
+CreateMouseCursorImageFileIfItDoesNotExist(BellMouseCursorImageFilePath)
+TrayTip Script, Now monitoring for the Outlook Reminders window to appear, , 16
+SetTitleMatchMode 2	; Use "title contains text" mode to match windows.
+
+;==========================================================
+; Main Loop
+;==========================================================
+loop
+{
+	; Wait for the window to appear.
+	WinWait, %OutlookRemindersWindowTitleTextToMatch%,
+
+	; Display any notifications about the window appearing.
+	WinSet, AlwaysOnTop, on, %OutlookRemindersWindowTitleTextToMatch%	; Set window to always be on top.
+	WinRestore, %OutlookRemindersWindowTitleTextToMatch%	; Restore the window if it's minimzed
+	TrayTip, Outlook Reminder, You have an outlook reminder open, , 16
+	ShowToolTip("You have an outlook reminder open.", 5000)
+	SetSystemMouseCursor(BellMouseCursorImageFilePath)
+
+	; Wait for the window to close and clear any remaining notifications about the window having appeared.
+	WinWaitClose, %OutlookRemindersWindowTitleTextToMatch%, ,30
+	HideToolTip()
+	RestoreDefaultMouseCursors()
+}
+
+;==========================================================
+; Functions
+;==========================================================
+
+CreateMouseCursorImageFileIfItDoesNotExist(bellMouseCursorImageFilePath)
+{
+	if !FileExist(bellMouseCursorImageFilePath)
+	{
+		Extract_BellImageFile(bellMouseCursorImageFilePath)
+	}
+}
+
+ShowToolTip(textToDisplay, numberOfMillisecondsToShowToolTipFor)
+{
+	ToolTip, %textToDisplay%,,,
+	SetTimer, HideToolTip, -%numberOfMillisecondsToShowToolTipFor%	; Only show the tooltip for the specified amount of time
+}
+
+HideToolTip()
+{
+	ToolTip
+}
+
+;----------------------------------------------------------
+; How to replace curosr: https://autohotkey.com/board/topic/32608-changing-the-system-cursor/
+;----------------------------------------------------------
 SetSystemMouseCursor(imageFilePath)
 {
 	Cursor := imageFilePath
@@ -19,48 +76,10 @@ RestoreDefaultMouseCursors()
 	DllCall( "SystemParametersInfo", UInt,SPI_SETCURSORS, UInt,0, UInt,0, UInt,0 )
 }
 
-BellMouseCursorImageFilePath = %A_ScriptDir%\bell.ani	; Define where to unpack the image file to.
-if !FileExist(BellMouseCursorImageFilePath)
-{
-	Extract_BellImageFile(BellMouseCursorImageFilePath)	; Unpack the image file to ensure it exists.
-}
-
-OutlookRemindersWindowTitleTextToMatch = Reminder(s)
-
-TrayTip Script, Now monitoring for the Outlook Reminders window to appear, , 16
-SetTitleMatchMode 2	; Use "title contains text" mode to match windows
-loop {
-	; Wait for the window to appear.
-	WinWait, %OutlookRemindersWindowTitleTextToMatch%,
-
-	; Display any notifications about the window appearing.
-	WinSet, AlwaysOnTop, on, %OutlookRemindersWindowTitleTextToMatch%	; Set window to always be on top.
-	WinRestore, %OutlookRemindersWindowTitleTextToMatch%	; Restore the window if it's minimzed
-	TrayTip, Outlook Reminder, You have an outlook reminder open, , 16
-	ShowToolTip("You have an outlook reminder open.", 5000)
-	SetSystemMouseCursor(BellMouseCursorImageFilePath)
-
-	; Wait for the window to close and clear any remaining notifications about the window having appeared.
-	WinWaitClose, %OutlookRemindersWindowTitleTextToMatch%, ,30
-	HideToolTip()
-	RestoreDefaultMouseCursors()
-}
-
-ShowToolTip(textToDisplay, numberOfMillisecondsToShowToolTipFor)
-{
-	ToolTip, %textToDisplay%,,,
-	SetTimer, HideToolTip, -%numberOfMillisecondsToShowToolTipFor%	; Only show the tooltip for the specified amount of time
-}
-
-HideToolTip()
-{
-	ToolTip
-}
-
-;==========================================================
+;----------------------------------------------------------
 ; Pack external files into ahk script: https://autohotkey.com/board/topic/64481-include-virtually-any-file-in-a-script-exezipdlletc/
 ; Bell cursor image: http://www.rw-designer.com/cursor-detail/91307
-;==========================================================
+;----------------------------------------------------------
 BellImageFile_Get(_What)
 {
 	Static Size = 34420, Name = "Bell.ani", Extension = "ani", Directory = "C:\Users\Dan.Schroeder\Desktop"
