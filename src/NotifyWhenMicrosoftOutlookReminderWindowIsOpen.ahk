@@ -24,7 +24,7 @@ Settings := LoadSettingsFromFileIfExistsOrCreateFile(SettingsFilePath, Settings)
 ;==========================================================
 if (Settings.PromptUserToViewSettingsFileOnStartup)
 {
-	Settings = PromptUserToAdjustSettings(settingsFilePath, Settings)
+	Settings := PromptUserToAdjustSettings(settingsFilePath, Settings)
 }
 
 ApplyStartupSettings(Settings)
@@ -62,7 +62,7 @@ LoadSettingsFromFileIfExistsOrCreateFile(settingsFilePath, settings)
 	; If the settings file exists, read it's contents into the settings object.
 	If (FileExist(settingsFilePath))
 	{
-		settings = LoadSettingsFromFile(settingsFilePath, settings)
+		settings := LoadSettingsFromFile(settingsFilePath, settings)
 	}
 	else
 	{
@@ -113,7 +113,7 @@ PromptUserToAdjustSettings(settingsFilePath, settings)
 	IfMsgBox, Yes
 	{
 		RunWait, edit %settingsFilePath%
-		settings = LoadSettingsFromFile(settingsFilePath, settings)
+		settings := LoadSettingsFromFile(settingsFilePath, settings)
 	}
 }
 
