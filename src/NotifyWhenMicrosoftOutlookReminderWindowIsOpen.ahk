@@ -3,68 +3,61 @@
 ;==========================================================
 BellMouseCursorImageFilePath := A_ScriptDir . "\bell.ani"	; Define where to unpack the mouse cursor image file to.
 OutlookRemindersWindowTitleTextToMatch := "Reminder(s)"
+SettingsFilePath := A_ScriptDir . "\NotifyWhenMicrosoftOutlookReminderWindowIsOpenSettings.ini"
 
 ;==========================================================
 ; Settings - Specify the default settings, then load any existing settings from the settings file.
 ;==========================================================
-_SettingsFilePath := A_ScriptDir . "\NotifyWhenMicrosoftOutlookReminderWindowIsOpen.settings"
-_ShowIconInSystemTray := true
-_ShowTrayTipOnStartup := true
-LoadSettingsFromFileIfExistsOrCreateFile()
+Settings := {}
+Settings.FirstRunSoPromptUserToViewSettingsFile := true
+Settings.ShowIconInSystemTray := true
+Settings.ShowTrayTipOnStartup := true
+Settings := LoadSettingsFromFileIfExistsOrCreateFile(SettingsFilePath, Settings)
 
-LoadSettingsFromFileIfExistsOrCreateFile()
+LoadSettingsFromFileIfExistsOrCreateFile(settingsFilePath, settings)
 {
-	; Include any global setting variables the we need.
-	; Use global variables for the settings variables since there is no easy way to pass a variable to a function by reference.
-	global _SettingsFilePath, _ShowIconInSystemTray, _ShowTrayTipOnStartup
-
 	; If the file exists, read in its contents and then delete it.
-	If (FileExist(_SettingsFilePath))
+	If (FileExist(settingsFilePath))
 	{
 		; Read in each line of the file.
-		Loop, Read, %_SettingsFilePath%
+		Loop, Read, %settingsFilePath%
 		{
-			; Split the string at the = sign
-			StringSplit, setting, A_LoopReadLine, =
+			; Split the string at the '=' sign.
+			StringSplit, settingLine, A_LoopReadLine, =
 
-			; If this is a valid setting line (e.g. setting=value)
-			if (setting0 = 2)
+			; If this is a valid setting line (i.e. it has 2 parts; setting=value).
+			if (settingLine0 = 2)
 			{
-				; Get the setting variable's value
-				_%setting1% = %setting2%
+				settingName := settingLine1
+				settingValue := settingLine2
+				settings[%settingName%] = %settingValue%
 			}
 		}
 	}
 
-	; Save the settings.
-	SaveSettingsToFile()
+	; Save the settings after loading them in order to make sure the settings file is created if it doesn't exist, and so any new settings added in a new version get written to the file.
+	SaveSettingsToFile(settingsFilePath, settings)
 
 	; Apply any applicable settings.
-	CPShowAHKScriptInSystemTray(_cpShowAHKScriptInSystemTray)
+	ShowAHKScriptInSystemTray(settings.ShowIconInSystemTray)
+
+	; Return the settings that were loaded.
+	return settings
 }
 
-SaveSettingsToFile()
+SaveSettingsToFile(settingsFilePath, settings)
 {
-	; Include any global setting variables the we need.
-	global _cpSettingsFilePath, _cpWindowWidthInPixels, _cpNumberOfCommandsToShow, _cpShowAHKScriptInSystemTray, _cpShowSelectedCommandWindow, _cpCommandMatchMethod, _cpNumberOfSecondsToShowSelectedCommandWindowFor, _cpShowSelectedCommandWindowWhenInfoIsReturnedFromCommand, _cpNumberOfSecondsToShowSelectedCommandWindowForWhenInfoIsReturnedFromCommand, _cpEscapeKeyShouldReloadScriptWhenACommandIsRunning
-
-	; Delete and recreate the settings file every time so that if new settings were added to code they will get written to the file.
-	If (FileExist(_cpSettingsFilePath))
+	; Delete the settings file so it is fresh when we write to it.
+	If (FileExist(settingsFilePath))
 	{
-		FileDelete, %_cpSettingsFilePath%
+		FileDelete, %settingsFilePath%
 	}
 
-	; Write the settings to the file (will be created automatically if needed)
-	; Setting name in file should be the variable name, without the "_cp" prefix.
-	FileAppend, CPShowAHKScriptInSystemTray=%_cpShowAHKScriptInSystemTray%`n, %_cpSettingsFilePath%
-	FileAppend, WindowWidthInPixels=%_cpWindowWidthInPixels%`n, %_cpSettingsFilePath%
-	FileAppend, NumberOfCommandsToShow=%_cpNumberOfCommandsToShow%`n, %_cpSettingsFilePath%
-	FileAppend, CommandMatchMethod=%_cpCommandMatchMethod%`n, %_cpSettingsFilePath%
-	FileAppend, ShowSelectedCommandWindow=%_cpShowSelectedCommandWindow%`n, %_cpSettingsFilePath%
-	FileAppend, NumberOfSecondsToShowSelectedCommandWindowFor=%_cpNumberOfSecondsToShowSelectedCommandWindowFor%`n, %_cpSettingsFilePath%
-	FileAppend, ShowSelectedCommandWindowWhenInfoIsReturnedFromCommand=%_cpShowSelectedCommandWindowWhenInfoIsReturnedFromCommand%`n, %_cpSettingsFilePath%
-	FileAppend, NumberOfSecondsToShowSelectedCommandWindowForWhenInfoIsReturnedFromCommand=%_cpNumberOfSecondsToShowSelectedCommandWindowForWhenInfoIsReturnedFromCommand%`n, %_cpSettingsFilePath%
-	FileAppend, EscapeKeyShouldReloadScriptWhenACommandIsRunning=%_cpEscapeKeyShouldReloadScriptWhenACommandIsRunning%`n, %_cpSettingsFilePath%
+	; Write the settings to the file (will be created automatically if needed).
+	for key, value in settings
+	{
+		FileAppend, %key%=%value%`n, %settingsFilePath%
+	}
 }
 
 
@@ -73,7 +66,6 @@ SaveSettingsToFile()
 ;==========================================================
 
 CreateMouseCursorImageFileIfItDoesNotExist(BellMouseCursorImageFilePath)
-
 TrayTip Script, Now monitoring for the Outlook Reminders window to appear, , 16
 SetTitleMatchMode 2	; Use "title contains text" mode to match windows.
 
