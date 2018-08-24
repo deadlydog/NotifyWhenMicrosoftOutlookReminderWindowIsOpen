@@ -1,13 +1,79 @@
 ;==========================================================
-; Hard-coded Variables
+; Constant Variables
 ;==========================================================
 BellMouseCursorImageFilePath := A_ScriptDir . "\bell.ani"	; Define where to unpack the mouse cursor image file to.
 OutlookRemindersWindowTitleTextToMatch := "Reminder(s)"
 
 ;==========================================================
+; Settings - Specify the default settings, then load any existing settings from the settings file.
+;==========================================================
+_SettingsFilePath := A_ScriptDir . "\NotifyWhenMicrosoftOutlookReminderWindowIsOpen.settings"
+_ShowIconInSystemTray := true
+_ShowTrayTipOnStartup := true
+LoadSettingsFromFileIfExistsOrCreateFile()
+
+LoadSettingsFromFileIfExistsOrCreateFile()
+{
+	; Include any global setting variables the we need.
+	; Use global variables for the settings variables since there is no easy way to pass a variable to a function by reference.
+	global _SettingsFilePath, _ShowIconInSystemTray, _ShowTrayTipOnStartup
+
+	; If the file exists, read in its contents and then delete it.
+	If (FileExist(_SettingsFilePath))
+	{
+		; Read in each line of the file.
+		Loop, Read, %_SettingsFilePath%
+		{
+			; Split the string at the = sign
+			StringSplit, setting, A_LoopReadLine, =
+
+			; If this is a valid setting line (e.g. setting=value)
+			if (setting0 = 2)
+			{
+				; Get the setting variable's value
+				_%setting1% = %setting2%
+			}
+		}
+	}
+
+	; Save the settings.
+	SaveSettingsToFile()
+
+	; Apply any applicable settings.
+	CPShowAHKScriptInSystemTray(_cpShowAHKScriptInSystemTray)
+}
+
+SaveSettingsToFile()
+{
+	; Include any global setting variables the we need.
+	global _cpSettingsFilePath, _cpWindowWidthInPixels, _cpNumberOfCommandsToShow, _cpShowAHKScriptInSystemTray, _cpShowSelectedCommandWindow, _cpCommandMatchMethod, _cpNumberOfSecondsToShowSelectedCommandWindowFor, _cpShowSelectedCommandWindowWhenInfoIsReturnedFromCommand, _cpNumberOfSecondsToShowSelectedCommandWindowForWhenInfoIsReturnedFromCommand, _cpEscapeKeyShouldReloadScriptWhenACommandIsRunning
+
+	; Delete and recreate the settings file every time so that if new settings were added to code they will get written to the file.
+	If (FileExist(_cpSettingsFilePath))
+	{
+		FileDelete, %_cpSettingsFilePath%
+	}
+
+	; Write the settings to the file (will be created automatically if needed)
+	; Setting name in file should be the variable name, without the "_cp" prefix.
+	FileAppend, CPShowAHKScriptInSystemTray=%_cpShowAHKScriptInSystemTray%`n, %_cpSettingsFilePath%
+	FileAppend, WindowWidthInPixels=%_cpWindowWidthInPixels%`n, %_cpSettingsFilePath%
+	FileAppend, NumberOfCommandsToShow=%_cpNumberOfCommandsToShow%`n, %_cpSettingsFilePath%
+	FileAppend, CommandMatchMethod=%_cpCommandMatchMethod%`n, %_cpSettingsFilePath%
+	FileAppend, ShowSelectedCommandWindow=%_cpShowSelectedCommandWindow%`n, %_cpSettingsFilePath%
+	FileAppend, NumberOfSecondsToShowSelectedCommandWindowFor=%_cpNumberOfSecondsToShowSelectedCommandWindowFor%`n, %_cpSettingsFilePath%
+	FileAppend, ShowSelectedCommandWindowWhenInfoIsReturnedFromCommand=%_cpShowSelectedCommandWindowWhenInfoIsReturnedFromCommand%`n, %_cpSettingsFilePath%
+	FileAppend, NumberOfSecondsToShowSelectedCommandWindowForWhenInfoIsReturnedFromCommand=%_cpNumberOfSecondsToShowSelectedCommandWindowForWhenInfoIsReturnedFromCommand%`n, %_cpSettingsFilePath%
+	FileAppend, EscapeKeyShouldReloadScriptWhenACommandIsRunning=%_cpEscapeKeyShouldReloadScriptWhenACommandIsRunning%`n, %_cpSettingsFilePath%
+}
+
+
+;==========================================================
 ; Startup
 ;==========================================================
+
 CreateMouseCursorImageFileIfItDoesNotExist(BellMouseCursorImageFilePath)
+
 TrayTip Script, Now monitoring for the Outlook Reminders window to appear, , 16
 SetTitleMatchMode 2	; Use "title contains text" mode to match windows.
 
@@ -41,6 +107,20 @@ CreateMouseCursorImageFileIfItDoesNotExist(bellMouseCursorImageFilePath)
 	if !FileExist(bellMouseCursorImageFilePath)
 	{
 		Extract_BellImageFile(bellMouseCursorImageFilePath)
+	}
+}
+
+ShowAHKScriptInSystemTray(showIconInSystemTray)
+{
+	; If we should show the Tray Icon.
+	if (showIconInSystemTray)
+	{
+		Menu, Tray, Icon
+	}
+	; Else hide the Tray Icon.
+	else
+	{
+		Menu, Tray, NoIcon
 	}
 }
 
