@@ -9,14 +9,14 @@ SettingsFilePath := A_ScriptDir . "\NotifyWhenMicrosoftOutlookReminderWindowIsOp
 ; Settings - Specify the default settings, then load any existing settings from the settings file.
 ;==========================================================
 Settings := {}	; Objects can be accessed with both associated array syntax (brackets) and object syntax (dots).
-Settings.PromptUserToViewSettingsFileOnStartup := { Value: false, Section: "Startup" }
-Settings.ShowIconInSystemTray := { Value: true, Section: "Startup" }
-Settings.ShowWindowsNotificationOnStartup := { Value: true, Section: "Startup" }
-Settings.ShowWindowsNotificationAlert := { Value: true, Section: "Windows Notification Alerts" }
-Settings.PlaySoundOnWindowsNotificationAlert := { Value: true, Section: "Windows Notification Alerts" }
-Settings.ShowTooltipAlert := { Value: true, Section: "Tooltip Alerts" }
-Settings.MillisecondsToShowTooltipAlertFor := { Value: 4000, Section: "Tooltip Alerts" }
-Settings.ChangeMouseCursorOnAlert := { Value: true, Section: "Mouse Cursor Alerts" }
+Settings.PromptUserToViewSettingsFileOnStartup := { Value: false, Category: "Startup" }
+Settings.ShowIconInSystemTray := { Value: true, Category: "Startup" }
+Settings.ShowWindowsNotificationOnStartup := { Value: true, Category: "Startup" }
+Settings.ShowWindowsNotificationAlert := { Value: true, Category: "Windows Notification Alerts" }
+Settings.PlaySoundOnWindowsNotificationAlert := { Value: true, Category: "Windows Notification Alerts" }
+Settings.ShowTooltipAlert := { Value: true, Category: "Tooltip Alerts" }
+Settings.MillisecondsToShowTooltipAlertFor := { Value: 4000, Category: "Tooltip Alerts" }
+Settings.ChangeMouseCursorOnAlert := { Value: true, Category: "Mouse Cursor Alerts" }
 Settings := LoadSettingsFromFileIfExistsOrCreateFile(SettingsFilePath, Settings)
 
 ;==========================================================
@@ -87,8 +87,8 @@ LoadSettingsFromFile(settingsFilePath, settings)
 	for settingName, obj in settings
 	{
 		value := obj.Value
-		section := obj.Section
-		IniRead, valueReadIn, %settingsFilePath%, %section%, %settingName%, %value%
+		category := obj.Category
+		IniRead, valueReadIn, %settingsFilePath%, %category%, %settingName%, %value%
 		obj.Value := valueReadIn
 	}
 	return settings
@@ -106,8 +106,8 @@ SaveSettingsToFile(settingsFilePath, settings)
 	for settingName, obj in settings
 	{
 		value := obj.Value
-		section := obj.Section
-		IniWrite, %value%, %settingsFilePath%, %section%, %settingName%
+		category := obj.Category
+		IniWrite, %value%, %settingsFilePath%, %category%, %settingName%
 	}
 }
 
