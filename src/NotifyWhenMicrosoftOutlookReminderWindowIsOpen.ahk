@@ -2,15 +2,15 @@
 ; Constant Variables
 ;==========================================================
 AppResourcesDirectoryPath := A_ScriptDir . "\NotifyWhenMicrosoftOutlookReminderWindowIsOpenResources"
-AppTrayIconFilePath := AppResourcesDirectoryPath . "\appIcon.ico"	; Define where to unpack the mouse cursor image file to.
-BellMouseCursorImageFilePath :=  AppResourcesDirectoryPath . "\bell.ani"	; Define where to unpack the mouse cursor image file to.
+AppTrayIconFilePath := AppResourcesDirectoryPath . "\AppIcon.ico"	; Define where to unpack the mouse cursor image file to.
+MouseCursorImageFilePath :=  AppResourcesDirectoryPath . "\MouseCursor.ani"	; Define where to unpack the mouse cursor image file to.
 SettingsFilePath := AppResourcesDirectoryPath . "\Settings.ini"
 OutlookRemindersWindowTitleTextToMatch := "Reminder(s)"
 
 ;==========================================================
 ; Script Initialization
 ;==========================================================
-InitializeScript(AppResourcesDirectoryPath, AppTrayIconFilePath, BellMouseCursorImageFilePath)
+InitializeScript(AppResourcesDirectoryPath, AppTrayIconFilePath, MouseCursorImageFilePath)
 
 ;==========================================================
 ; Settings - Specify the default settings, then load any existing settings from the settings file.
@@ -51,7 +51,7 @@ loop
 	WinRestore, %OutlookRemindersWindowTitleTextToMatch%	; Restore the window if it's minimzed.
 
 	; Display any notifications about the window appearing.
-	TriggerNotifications(settings, BellMouseCursorImageFilePath)
+	TriggerNotifications(settings, MouseCursorImageFilePath)
 
 	; Wait for the window to close and clear any remaining notifications about the window having appeared.
 	secondsToWaitForWindowToBeClosed := (Settings.SecondsBeforeAlertsAreReTriggeredWhenWindowIsStillOpen).Value
@@ -63,17 +63,17 @@ loop
 ; Functions
 ;==========================================================
 
-InitializeScript(AppResourcesDirectoryPath, AppTrayIconFilePath, BellMouseCursorImageFilePath)
+InitializeScript(appResourcesDirectoryPath, appTrayIconFilePath, mouseCursorImageFilePath)
 {
 	; Ensure the directory to create files in and read from exists.
-	FileCreateDir, %AppResourcesDirectoryPath%
+	FileCreateDir, %appResourcesDirectoryPath%
 
 	; Ensure that any images embedded in the script have been extracted into files.
-	CreateAppIconFileIfItDoesNotExist(AppTrayIconFilePath)
-	CreateMouseCursorImageFileIfItDoesNotExist(BellMouseCursorImageFilePath)
+	CreateAppIconFileIfItDoesNotExist(appTrayIconFilePath)
+	CreateMouseCursorImageFileIfItDoesNotExist(mouseCursorImageFilePath)
 
 	; Set the system tray icon to use for this script.
-	Menu, Tray, Icon, %AppTrayIconFilePath%
+	Menu, Tray, Icon, %appTrayIconFilePath%
 }
 
 CreateAppIconFileIfItDoesNotExist(appIconFilePath)
@@ -84,11 +84,11 @@ CreateAppIconFileIfItDoesNotExist(appIconFilePath)
 	}
 }
 
-CreateMouseCursorImageFileIfItDoesNotExist(bellMouseCursorImageFilePath)
+CreateMouseCursorImageFileIfItDoesNotExist(mouseCursorImageFilePath)
 {
-	if !FileExist(bellMouseCursorImageFilePath)
+	if !FileExist(mouseCursorImageFilePath)
 	{
-		Extract_BellImageFile(bellMouseCursorImageFilePath)
+		Extract_MouseCursorImageFile(mouseCursorImageFilePath)
 	}
 }
 
@@ -255,16 +255,16 @@ RestoreDefaultMouseCursors()
 ; Pack external files into ahk script: https://autohotkey.com/board/topic/64481-include-virtually-any-file-in-a-script-exezipdlletc/
 ; Bell cursor image: http://www.rw-designer.com/cursor-detail/91307
 ;----------------------------------------------------------
-BellImageFile_Get(_What)
+MouseCursorImageFile_Get(_What)
 {
-	Static Size = 34420, Name = "Bell.ani", Extension = "ani", Directory = "C:\Users\Dan.Schroeder\Desktop"
+	Static Size = 34420, Name = "MouseCursor.ani", Extension = "ani", Directory = "C:\dev\Git\NotifyWhenMicrosoftOutlookReminderWindowIsOpen\src\NotifyWhenMicrosoftOutlookReminderWindowIsOpenResources"
 	, Options = "Size,Name,Extension,Directory"
 	;This function returns the size(in bytes), name, filename, extension or directory of the file stored depending on what you ask for.
 	If (InStr("," Options ",", "," _What ","))
 		Return %_What%
 }
 
-Extract_BellImageFile(_Filename, _DumpData = 0)
+Extract_MouseCursorImageFile(_Filename, _DumpData = 0)
 {
 	;This function "extracts" the file to the location+name you pass to it.
 	Static HasData = 1, Out_Data, Ptr, ExtractedData
