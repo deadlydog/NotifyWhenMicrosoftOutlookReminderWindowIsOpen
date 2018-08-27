@@ -17,7 +17,7 @@ The actions taken to try and grab your attention are configurable, so you can cu
 
 ## How To Run The App
 
-Simply [download the executable][DownloadLatestVersionOfExecutableUrl] and run it. If you want to have it run automatically when you log into Windows, copy it to [your startup directory][HowToOpenStartupDirectoryInstructionsUrl].
+Simply [download the executable][DownloadLatestVersionOfExecutableUrl] and run it. If you want to have it run automatically when you log into Windows, copy the executable (or a shortcut to it) to [your startup directory][HowToOpenStartupDirectoryInstructionsUrl].
 
 
 ## Limitations / Quirks
