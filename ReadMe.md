@@ -15,9 +15,9 @@ This is a simple executable that will run in the background and watch for the Mi
 The actions taken to try and grab your attention are configurable, so you can customize it to be as subtle or obtrusive as you like.
 
 
-## Insallation
+## How To Run The App
 
-Simply download the executable and run it. If you want to have it run automatically when you log into Windows, add it to your startup directory.
+Simply [download the executable][DownloadLatestVersionOfExecutableUrl] and run it. If you want to have it run automatically when you log into Windows, copy it to [your startup directory][HowToOpenStartupDirectoryInstructionsUrl].
 
 
 ## Limitations / Quirks
@@ -27,4 +27,10 @@ Simply download the executable and run it. If you want to have it run automatica
 
 ## Credit
 
-This script started from [this Stack Overflow answer](https://stackoverflow.com/a/35154133/602585). I just decided to add more features and make them customizable.
+This script started from [this Stack Overflow answer][StackOverflowPostThatScriptStartedFromUrl]. I just decided to add more features and make them customizable.
+
+
+<!-- Links -->
+[DownloadLatestVersionOfExecutableUrl]: https://github.com/deadlydog/NotifyWhenMicrosoftOutlookReminderWindowIsOpen/releases
+[HowToOpenStartupDirectoryInstructionsUrl]: https://www.thewindowsclub.com/startup-folder-in-windows-8
+[StackOverflowPostThatScriptStartedFromUrl]: https://stackoverflow.com/a/35154133/602585
