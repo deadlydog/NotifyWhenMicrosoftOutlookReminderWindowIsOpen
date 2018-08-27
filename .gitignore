@@ -2,8 +2,9 @@
 *.bak
 *.orig
 
-# Don't commit the mouse cursor file since it is embedded in the script.
+# Don't commit the image files embedded in the script.
 *.ani
+*.ico
 
 # Don't commit the setings file that gets created.
 *.ini
