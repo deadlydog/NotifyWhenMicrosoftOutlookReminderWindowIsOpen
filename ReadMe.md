@@ -15,6 +15,11 @@ This is a simple executable that will run in the background and watch for the Mi
 The actions taken to try and grab your attention are configurable, so you can customize it to be as subtle or obtrusive as you like.
 
 
+## Insallation
+
+Simply download the executable and run it. If you want to have it run automatically when you log into Windows, add it to your startup directory.
+
+
 ## Limitations / Quirks
 
 * This script triggers for any window with `Reminder(s)` in it's title, so if you saved a file with the name `I like Reminder(s).txt` and opened it in Notepad, this would trigger because that text will appear in the window's title.
