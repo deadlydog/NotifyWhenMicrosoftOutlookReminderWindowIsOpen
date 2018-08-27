@@ -32,7 +32,7 @@ Settings := LoadSettingsFromFileIfExistsOrCreateFile(SettingsFilePath, Settings)
 ;==========================================================
 if ((Settings.PromptUserToViewSettingsFileOnStartup).Value)
 {
-	Settings := PromptUserToAdjustSettings(settingsFilePath, Settings)
+	Settings := PromptUserToAdjustSettingsAndGetUpdatedSettings(settingsFilePath, Settings)
 }
 
 ApplyStartupSettings(Settings)
@@ -148,7 +148,7 @@ SaveSettingsToFile(settingsFilePath, settings)
 	}
 }
 
-PromptUserToAdjustSettings(settingsFilePath, settings)
+PromptUserToAdjustSettingsAndGetUpdatedSettings(settingsFilePath, settings)
 {
 	MsgBox, 4, Open Settings File?, It seems this is the first time launching the Notify When Microsoft Outlook Reminder Window Is Open application.`n`nWould you like to view the settings file now to make changes to it?`n`n%settingsFilePath%
 
@@ -157,6 +157,8 @@ PromptUserToAdjustSettings(settingsFilePath, settings)
 		RunWait, edit %settingsFilePath%
 		settings := LoadSettingsFromFile(settingsFilePath, settings)
 	}
+
+	return settings
 }
 
 ApplyStartupSettings(settings)
