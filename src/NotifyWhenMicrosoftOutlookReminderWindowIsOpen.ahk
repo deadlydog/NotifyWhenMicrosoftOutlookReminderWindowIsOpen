@@ -25,6 +25,8 @@ Settings.ShowTooltipAlert := { Value: true, Category: "Tooltip Alerts" }
 Settings.MillisecondsToShowTooltipAlertFor := { Value: 4000, Category: "Tooltip Alerts" }
 Settings.ChangeMouseCursorOnAlert := { Value: true, Category: "Mouse Cursor Alerts" }
 Settings.SecondsBeforeAlertsAreReTriggeredWhenWindowIsStillOpen := { Value: 30, Category: "General" }
+Settings.EnsureOutlookRemindersWindowIsRestored := { Value: true, Category: "Outlook Reminders Window" }
+Settings.EnsureOutlookRemindersWindowIsAlwaysOnTop := { Value: true, Category: "Outlook Reminders Window" }
 Settings := LoadSettingsFromFileIfExistsOrCreateFile(SettingsFilePath, Settings)
 
 ;==========================================================
@@ -46,16 +48,14 @@ loop
 	; Wait for the window to appear.
 	WinWait, %OutlookRemindersWindowTitleTextToMatch%,
 
-	; Now that the window has appeared, make sure it is visible.
-	WinSet, AlwaysOnTop, on, %OutlookRemindersWindowTitleTextToMatch%	; Set window to always be on top.
-	WinRestore, %OutlookRemindersWindowTitleTextToMatch%	; Restore the window if it's minimzed.
-
 	; Display any notifications about the window appearing.
-	TriggerNotifications(settings, MouseCursorImageFilePath)
+	TriggerNotifications(settings, OutlookRemindersWindowTitleTextToMatch, MouseCursorImageFilePath)
 
-	; Wait for the window to close and clear any remaining notifications about the window having appeared.
+	; Wait for the window to close, or for the timeout period to elapse.
 	secondsToWaitForWindowToBeClosed := (Settings.SecondsBeforeAlertsAreReTriggeredWhenWindowIsStillOpen).Value
 	WinWaitClose, %OutlookRemindersWindowTitleTextToMatch%, , %secondsToWaitForWindowToBeClosed%
+
+	; Clear any remaining notifications about the window having appeared.
 	ClearNotifications()
 }
 
@@ -185,8 +185,18 @@ ShowAHKScriptIconInSystemTray(showIconInSystemTray)
 	}
 }
 
-TriggerNotifications(settings, mouseCursorImageFilePath)
+TriggerNotifications(settings, outlookRemindersWindowTitleTextToMatch, mouseCursorImageFilePath)
 {
+	if ((settings.EnsureOutlookRemindersWindowIsRestored).Value)
+	{
+		WinRestore, %outlookRemindersWindowTitleTextToMatch%	; Make sure the window is not minized or maximized.
+	}
+
+	if ((settings.EnsureOutlookRemindersWindowIsAlwaysOnTop).Value)
+	{
+		WinSet, AlwaysOnTop, on, %outlookRemindersWindowTitleTextToMatch%
+	}
+
 	if ((settings.ShowWindowsNotificationAlert).Value)
 	{
 		ShowTrayTip("Outlook Reminder", "You have an Outlook reminder open", (settings.PlaySoundOnWindowsNotificationAlert).Value)

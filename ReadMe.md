@@ -12,8 +12,6 @@ This often results in you being late to meetings or appointments simply because 
 
 This is a simple executable that will run in the background and watch for the Microsoft Outlook reminder window to open, and then perform some actions to try and make it more aparent to you that the window has opened (i.e. that a reminder has gone off).
 
-When the Outlook remind window opens, this will always ensure it is not minimized and will set it to "always on top" so it does not get hidden behind other windows.
-
 
 ### Configurable Alerts
 
