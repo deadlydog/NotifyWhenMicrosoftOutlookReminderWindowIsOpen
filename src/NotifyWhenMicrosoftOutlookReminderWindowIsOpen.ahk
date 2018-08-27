@@ -88,8 +88,8 @@ LoadSettingsFromFile(settingsFilePath, settings)
 	{
 		value := obj.Value
 		section := obj.Section
-		IniRead, value, settingsFilePath, %section%, settingName, %value%
-		obj.Value := value
+		IniRead, valueReadIn, %settingsFilePath%, %section%, %settingName%, %value%
+		obj.Value := valueReadIn
 	}
 	return settings
 }
