@@ -7,3 +7,6 @@
 
 # Don't commit the setings file that gets created.
 *.ini
+
+# Don't commit and release binaries.
+*.exe
