@@ -55,8 +55,11 @@ loop
 	secondsToWaitForWindowToBeClosed := (Settings.SecondsBeforeAlertsAreReTriggeredWhenWindowIsStillOpen).Value
 	WinWaitClose, %OutlookRemindersWindowTitleTextToMatch%, , %secondsToWaitForWindowToBeClosed%
 
-	; Clear any remaining notifications about the window having appeared.
-	ClearNotifications()
+	; If the window was closed, clear any remaining notifications about the window having appeared.
+	IfWinNotExist, %OutlookRemindersWindowTitleTextToMatch%
+	{
+		ClearNotifications()
+	}
 }
 
 ;==========================================================
