@@ -1,3 +1,9 @@
+# Don't commit backup files generated automatically by the IDE and git.
 *.bak
+*.orig
+
+# Don't commit the mouse cursor file since it is embedded in the script.
 *.ani
+
+# Don't commit the setings file that gets created.
 *.ini
