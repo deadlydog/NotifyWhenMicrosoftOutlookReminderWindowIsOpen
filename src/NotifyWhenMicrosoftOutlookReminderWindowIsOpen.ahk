@@ -1,9 +1,13 @@
 ;==========================================================
 ; Constant Variables
 ;==========================================================
-BellMouseCursorImageFilePath := A_ScriptDir . "\bell.ani"	; Define where to unpack the mouse cursor image file to.
+AppResourcesDirectoryPath := A_ScriptDir . "\NotifyWhenMicrosoftOutlookReminderWindowIsOpenSettings"
+BellMouseCursorImageFilePath :=  AppResourcesDirectoryPath . "\bell.ani"	; Define where to unpack the mouse cursor image file to.
+SettingsFilePath := AppResourcesDirectoryPath . "\NotifyWhenMicrosoftOutlookReminderWindowIsOpenSettings.ini"
 OutlookRemindersWindowTitleTextToMatch := "Reminder(s)"
-SettingsFilePath := A_ScriptDir . "\NotifyWhenMicrosoftOutlookReminderWindowIsOpenSettings.ini"
+
+; Ensure the directory to create files in and read from exists.
+FileCreateDir, %AppResourcesDirectoryPath%
 
 ;==========================================================
 ; Settings - Specify the default settings, then load any existing settings from the settings file.
