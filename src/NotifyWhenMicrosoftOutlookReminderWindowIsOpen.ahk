@@ -44,7 +44,7 @@ loop
 	WinRestore, %OutlookRemindersWindowTitleTextToMatch%	; Restore the window if it's minimzed.
 
 	; Display any notifications about the window appearing.
-	TriggerNotifications(settings)
+	TriggerNotifications(settings, BellMouseCursorImageFilePath)
 
 	; Wait for the window to close and clear any remaining notifications about the window having appeared.
 	WinWaitClose, %OutlookRemindersWindowTitleTextToMatch%, ,30
@@ -154,7 +154,7 @@ ShowAHKScriptIconInSystemTray(showIconInSystemTray)
 	}
 }
 
-TriggerNotifications(settings)
+TriggerNotifications(settings, mouseCursorImageFilePath)
 {
 	if ((settings.ShowWindowsNotificationAlert).Value)
 	{
@@ -168,7 +168,7 @@ TriggerNotifications(settings)
 
 	if ((settings.ChangeMouseCursorOnAlert).Value)
 	{
-		SetSystemMouseCursor(BellMouseCursorImageFilePath)
+		SetSystemMouseCursor(mouseCursorImageFilePath)
 	}
 }
 
