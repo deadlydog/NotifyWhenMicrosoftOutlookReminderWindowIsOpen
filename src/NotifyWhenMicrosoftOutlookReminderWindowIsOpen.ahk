@@ -86,7 +86,7 @@ LoadSettingsFromFile(settingsFilePath, settings)
 {
 	for key, value in settings
 	{
-		IniRead, valueReadIn, settingsFilePath, "Settings - For toggle settings 0 = false/no/off and 1 = true/yes/on", key, settings[%key%]
+		IniRead, valueReadIn, settingsFilePath, "Settings - For toggle settings 0 = false/no/off and 1 = true/yes/on", key, %value%
 		settings[%key%] := valueReadIn
 	}
 	return settings
