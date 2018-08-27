@@ -4,7 +4,7 @@
 AppResourcesDirectoryPath := A_ScriptDir . "\NotifyWhenMicrosoftOutlookReminderWindowIsOpenResources"
 AppTrayIconFilePath := AppResourcesDirectoryPath . "\appIcon.ico"	; Define where to unpack the mouse cursor image file to.
 BellMouseCursorImageFilePath :=  AppResourcesDirectoryPath . "\bell.ani"	; Define where to unpack the mouse cursor image file to.
-SettingsFilePath := AppResourcesDirectoryPath . "\NotifyWhenMicrosoftOutlookReminderWindowIsOpenSettings.ini"
+SettingsFilePath := AppResourcesDirectoryPath . "\Settings.ini"
 OutlookRemindersWindowTitleTextToMatch := "Reminder(s)"
 
 ;==========================================================
