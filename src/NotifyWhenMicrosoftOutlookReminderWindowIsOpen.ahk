@@ -21,6 +21,7 @@ Settings.PlaySoundOnWindowsNotificationAlert := { Value: true, Category: "Window
 Settings.ShowTooltipAlert := { Value: true, Category: "Tooltip Alerts" }
 Settings.MillisecondsToShowTooltipAlertFor := { Value: 4000, Category: "Tooltip Alerts" }
 Settings.ChangeMouseCursorOnAlert := { Value: true, Category: "Mouse Cursor Alerts" }
+Settings.SecondsBeforeAlertsAreReTriggeredWhenWindowIsStillOpen := { Value: 30, Category: "General" }
 Settings := LoadSettingsFromFileIfExistsOrCreateFile(SettingsFilePath, Settings)
 
 ;==========================================================
@@ -51,7 +52,8 @@ loop
 	TriggerNotifications(settings, BellMouseCursorImageFilePath)
 
 	; Wait for the window to close and clear any remaining notifications about the window having appeared.
-	WinWaitClose, %OutlookRemindersWindowTitleTextToMatch%, ,30
+	secondsToWaitForWindowToBeClosed := (Settings.SecondsBeforeAlertsAreReTriggeredWhenWindowIsStillOpen).Value
+	WinWaitClose, %OutlookRemindersWindowTitleTextToMatch%, , %secondsToWaitForWindowToBeClosed%
 	ClearNotifications()
 }
 
