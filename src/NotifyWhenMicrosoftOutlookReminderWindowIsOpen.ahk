@@ -77,6 +77,9 @@ InitializeScript(appResourcesDirectoryPath, appTrayIconFilePath, mouseCursorImag
 
 	; Set the system tray icon to use for this script.
 	Menu, Tray, Icon, %appTrayIconFilePath%
+
+	; Before exiting the script ensure that all notifications have been cleared (mouse cursor restored, etc.)
+	OnExit("ClearNotifications")
 }
 
 CreateAppIconFileIfItDoesNotExist(appIconFilePath)
