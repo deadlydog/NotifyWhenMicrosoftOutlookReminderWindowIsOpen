@@ -19,11 +19,13 @@ Settings := {}	; Objects can be accessed with both associated array syntax (brac
 Settings.PromptUserToViewSettingsFileOnStartup := { Value: false, Category: "Startup" }
 Settings.ShowIconInSystemTray := { Value: true, Category: "Startup" }
 Settings.ShowWindowsNotificationOnStartup := { Value: true, Category: "Startup" }
-Settings.ShowWindowsNotificationAlert := { Value: true, Category: "Windows Notification Alerts" }
-Settings.PlaySoundOnWindowsNotificationAlert := { Value: true, Category: "Windows Notification Alerts" }
-Settings.ShowTooltipAlert := { Value: true, Category: "Tooltip Alerts" }
-Settings.MillisecondsToShowTooltipAlertFor := { Value: 4000, Category: "Tooltip Alerts" }
-Settings.ChangeMouseCursorOnAlert := { Value: true, Category: "Mouse Cursor Alerts" }
+Settings.ShowWindowsNotificationAlert := { Value: true, Category: "Windows Notification Alert" }
+Settings.PlaySoundOnWindowsNotificationAlert := { Value: true, Category: "Windows Notification Alert" }
+Settings.ShowTooltipAlert := { Value: true, Category: "Tooltip Alert" }
+Settings.MillisecondsToShowTooltipAlertFor := { Value: 4000, Category: "Tooltip Alert" }
+Settings.ChangeMouseCursorOnAlert := { Value: true, Category: "Mouse Cursor Alert" }
+Settings.ShowTransparentWindowAlert := { Value: true, Category: "Transparent Window Alert" }
+Settings.MillisecondsToShowTransparentWindowAlertFor := { Value: 3000, Category: "Transparent Window Alert" }
 Settings.SecondsBeforeAlertsAreReTriggeredWhenWindowIsStillOpen := { Value: 30, Category: "General" }
 Settings.EnsureOutlookRemindersWindowIsRestored := { Value: true, Category: "Outlook Reminders Window" }
 Settings.EnsureOutlookRemindersWindowIsAlwaysOnTop := { Value: true, Category: "Outlook Reminders Window" }
@@ -210,12 +212,17 @@ TriggerNotifications(settings, outlookRemindersWindowTitleTextToMatch, mouseCurs
 
 	if ((settings.ShowTooltipAlert).Value)
 	{
-		ShowToolTip("You have an outlook reminder open", (settings.MillisecondsToShowTooltipAlertFor).Value)
+		ShowToolTip("You have an Outlook reminder open", (settings.MillisecondsToShowTooltipAlertFor).Value)
 	}
 
 	if ((settings.ChangeMouseCursorOnAlert).Value)
 	{
 		SetSystemMouseCursor(mouseCursorImageFilePath)
+	}
+
+	if ((settings.ShowTransparentWindowAlert).Value)
+	{
+		ShowTransparentWindow("You have an Outlook reminder open", "", (settings.MillisecondsToShowTransparentWindowAlertFor).Value)
 	}
 }
 
@@ -233,6 +240,39 @@ ShowToolTip(textToDisplay, numberOfMillisecondsToShowToolTipFor)
 {
 	ToolTip, %textToDisplay%,,,
 	SetTimer, HideToolTip, -%numberOfMillisecondsToShowToolTipFor%	; Only show the tooltip for the specified amount of time.
+}
+
+ShowTransparentWindow(title, text, numberOfMillisecondsToShowWindowFor)
+{
+	titleFontSize := 24
+	textFontSize := 16
+
+	; Shrink the margin so that the text goes up close to the edge of the window border.
+	windowMargin := titleFontSize * 0.1
+
+	Gui 3:Default	; Specify that these controls are for window #3.
+
+	; Create the transparent window to display the text
+	backgroundColor = DDDDDD  ; Can be any RGB color (it will be made transparent below).
+	Gui +LastFound +AlwaysOnTop -Caption +ToolWindow +Border  ; +ToolWindow avoids a taskbar button and an alt-tab menu item.
+	Gui, Margin, %windowMargin%, %windowMargin%
+	Gui, Color, %backgroundColor%
+	Gui, Font, s%titleFontSize% bold
+	Gui, Add, Text,, %title%
+	Gui, Font, s%textFontSize% norm
+	if (text != "")
+		Gui, Add, Text,, %text%
+	WinSet, TransColor, FFFFFF 180	; Make all pixels of this color transparent (shouldn't be any with color FFFFFF) and make all other pixels semi-transparent.
+	Gui, Show, AutoSize Center NoActivate  ; NoActivate avoids deactivating the currently active window.
+
+	; Set the window to close after the given duration.
+	SetTimer, CloseWindow, %numberOfMillisecondsToShowWindowFor%
+	return
+
+	CloseWindow:
+		SetTimer, CloseWindow, Off		; Make sure the timer doesn't fire again.
+		Gui, 3:Destroy					; Close the GUI, but leave the script running.
+	return
 }
 
 ClearNotifications()
