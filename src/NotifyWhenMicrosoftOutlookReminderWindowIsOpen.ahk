@@ -266,19 +266,20 @@ ShowTransparentWindow(title, text, numberOfMillisecondsToShowWindowFor)
 	Gui, Show, AutoSize Center NoActivate  ; NoActivate avoids deactivating the currently active window.
 
 	; Set the window to close after the given duration.
-	SetTimer, CloseWindow, %numberOfMillisecondsToShowWindowFor%
-	return
+	SetTimer, CloseTransparentWindow, %numberOfMillisecondsToShowWindowFor%
+}
 
-	CloseWindow:
-		SetTimer, CloseWindow, Off		; Make sure the timer doesn't fire again.
-		Gui, 3:Destroy					; Close the GUI, but leave the script running.
-	return
+CloseTransparentWindow()
+{
+	SetTimer, CloseTransparentWindow, Off	; Make sure the timer doesn't fire again.
+	Gui, 3:Destroy							; Close the GUI, but leave the script running. Transparent window is window #3.
 }
 
 ClearAlerts()
 {
 	HideToolTip()
 	RestoreDefaultMouseCursors()
+	CloseTransparentWindow()
 }
 
 HideToolTip()
