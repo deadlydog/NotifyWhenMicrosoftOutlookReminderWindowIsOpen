@@ -26,7 +26,7 @@ Settings.MillisecondsToShowTooltipAlertFor := { Value: 4000, Category: "Tooltip 
 Settings.ChangeMouseCursorOnAlert := { Value: true, Category: "Mouse Cursor Alert" }
 Settings.ShowTransparentWindowAlert := { Value: true, Category: "Transparent Window Alert" }
 Settings.MillisecondsToShowTransparentWindowAlertFor := { Value: 3000, Category: "Transparent Window Alert" }
-Settings.SecondsBeforeAlertsAreReTriggeredWhenWindowIsStillOpen := { Value: 30, Category: "General" }
+Settings.SecondsBeforeAlertsAreReTriggeredWhenOutlookRemindersWindowIsStillOpen := { Value: 30, Category: "General" }
 Settings.EnsureOutlookRemindersWindowIsRestored := { Value: true, Category: "Outlook Reminders Window" }
 Settings.EnsureOutlookRemindersWindowIsAlwaysOnTop := { Value: true, Category: "Outlook Reminders Window" }
 Settings := LoadSettingsFromFileIfExistsOrCreateFile(SettingsFilePath, Settings)
@@ -54,7 +54,7 @@ loop
 	TriggerAlerts(settings, OutlookRemindersWindowTitleTextToMatch, MouseCursorImageFilePath)
 
 	; Wait for the window to close, or for the timeout period to elapse.
-	secondsToWaitForWindowToBeClosed := (Settings.SecondsBeforeAlertsAreReTriggeredWhenWindowIsStillOpen).Value
+	secondsToWaitForWindowToBeClosed := (Settings.SecondsBeforeAlertsAreReTriggeredWhenOutlookRemindersWindowIsStillOpen).Value
 	WinWaitClose, %OutlookRemindersWindowTitleTextToMatch%, , %secondsToWaitForWindowToBeClosed%
 
 	; If the window was closed, clear any remaining alerts about the window having appeared.
