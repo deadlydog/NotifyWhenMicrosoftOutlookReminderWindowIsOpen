@@ -50,17 +50,17 @@ loop
 	; Wait for the window to appear.
 	WinWait, %OutlookRemindersWindowTitleTextToMatch%,
 
-	; Display any notifications about the window appearing.
-	TriggerNotifications(settings, OutlookRemindersWindowTitleTextToMatch, MouseCursorImageFilePath)
+	; Display any alerts about the window appearing.
+	TriggerAlerts(settings, OutlookRemindersWindowTitleTextToMatch, MouseCursorImageFilePath)
 
 	; Wait for the window to close, or for the timeout period to elapse.
 	secondsToWaitForWindowToBeClosed := (Settings.SecondsBeforeAlertsAreReTriggeredWhenWindowIsStillOpen).Value
 	WinWaitClose, %OutlookRemindersWindowTitleTextToMatch%, , %secondsToWaitForWindowToBeClosed%
 
-	; If the window was closed, clear any remaining notifications about the window having appeared.
+	; If the window was closed, clear any remaining alerts about the window having appeared.
 	IfWinNotExist, %OutlookRemindersWindowTitleTextToMatch%
 	{
-		ClearNotifications()
+		ClearAlerts()
 	}
 }
 
@@ -80,8 +80,8 @@ InitializeScript(appResourcesDirectoryPath, appTrayIconFilePath, mouseCursorImag
 	; Set the system tray icon to use for this script.
 	Menu, Tray, Icon, %appTrayIconFilePath%
 
-	; Before exiting the script ensure that all notifications have been cleared (mouse cursor restored, etc.)
-	OnExit("ClearNotifications")
+	; Before exiting the script ensure that all alerts have been cleared (mouse cursor restored, etc.)
+	OnExit("ClearAlerts")
 }
 
 CreateAppIconFileIfItDoesNotExist(appIconFilePath)
@@ -193,7 +193,7 @@ ShowAHKScriptIconInSystemTray(showIconInSystemTray)
 	}
 }
 
-TriggerNotifications(settings, outlookRemindersWindowTitleTextToMatch, mouseCursorImageFilePath)
+TriggerAlerts(settings, outlookRemindersWindowTitleTextToMatch, mouseCursorImageFilePath)
 {
 	if ((settings.EnsureOutlookRemindersWindowIsRestored).Value)
 	{
@@ -275,7 +275,7 @@ ShowTransparentWindow(title, text, numberOfMillisecondsToShowWindowFor)
 	return
 }
 
-ClearNotifications()
+ClearAlerts()
 {
 	HideToolTip()
 	RestoreDefaultMouseCursors()
