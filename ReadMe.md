@@ -54,6 +54,8 @@ That's it. Now when you log into Windows the application should start automatica
 
 * This script triggers for any window with `Reminder(s)` in it's title, so if you saved a file with the name `I like Reminder(s).txt` and opened it in Notepad, this would trigger because that text will appear in the window's title.
 
+* The alerts in this app only fire when th Outlook Reminders window has been triggered but Outlook. Unfortunately, Outlook doesn't provide the ability to get reminded one or two minutes before the event; it only offers "5 minutes before start" and "0 minutes before start". This means that you may still be a minute or two late for the event simply because Outlook reminded you of it too late, especially if you need to walk to another room to get to the event. The [Outlook Better Reminders addin][OutlookBetterRemindersOutlookAddinGitHubUrl] will show a reminder 1 minute before the actual event time, allowing you to show up right on time for your events, so you may want to check it out as well.
+
 
 ## Credit
 
@@ -64,3 +66,4 @@ This script started from [this Stack Overflow answer][StackOverflowPostThatScrip
 [DownloadLatestVersionOfExecutableUrl]: https://github.com/deadlydog/NotifyWhenMicrosoftOutlookReminderWindowIsOpen/releases
 [HowToOpenStartupDirectoryInstructionsUrl]: https://www.thewindowsclub.com/startup-folder-in-windows-8
 [StackOverflowPostThatScriptStartedFromUrl]: https://stackoverflow.com/a/35154133/602585
+[OutlookBetterRemindersOutlookAddinGitHubUrl]: https://github.com/ben-spiller/OutlookBetterReminders
