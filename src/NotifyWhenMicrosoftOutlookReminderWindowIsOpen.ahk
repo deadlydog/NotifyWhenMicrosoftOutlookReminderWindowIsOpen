@@ -160,10 +160,7 @@ LoadSettingsFromFile(settingsFilePath, settings)
 SaveSettingsToFile(settingsFilePath, settings)
 {
 	; Delete the settings file so it is fresh when we write to it.
-	If (FileExist(settingsFilePath))
-	{
-		FileDelete, %settingsFilePath%
-	}
+	DeleteFile(settingsFilePath)
 
 	; Write the settings to the file (will be created automatically if needed).
 	for settingName, obj in settings
@@ -171,6 +168,14 @@ SaveSettingsToFile(settingsFilePath, settings)
 		value := obj.Value
 		category := obj.Category
 		IniWrite, %value%, %settingsFilePath%, %category%, %settingName%
+	}
+}
+
+DeleteFile(filePath)
+{
+	If (FileExist(filePath))
+	{
+		FileDelete, %filePath%
 	}
 }
 
@@ -371,7 +376,8 @@ ShowSettingsWindow(settingsFilePathParameter, settingsParameter)
 		Gui, Add, UpDown, yp+25 x20 vmillisecondsToShowTransparentWindowAlertFor Range1-60000 Disabled%transparentWindowAlertsAreDisabled%, %millisecondsToShowTransparentWindowAlertFor%
 
 	Gui, Add, Button, gSettingsCancelButton xm w100, Cancel
-	Gui, Add, Button, gSettingsSaveButton x+325 w100, Save
+	Gui, Add, Button, gRestoreDefaultSettingsButton x+200 w100, Restore Defaults
+	Gui, Add, Button, gSettingsSaveButton x+25 w100, Save
 
 	; Show the GUI, set focus to the input box, and wait for input.
 	Gui, Show, AutoSize Center, Notify When Outlook Reminder Window Is Open - Settings
@@ -424,6 +430,12 @@ ShowSettingsWindow(settingsFilePathParameter, settingsParameter)
 		(settings.EnsureOutlookRemindersWindowIsAlwaysOnTop).Value := ensureOutlookRemindersWindowIsAlwaysOnTop
 		SaveSettingsToFile(settingsFilePath, settings)	; Save the settings before loading them again.
 		Reload	; Reload the script to apply the new settings.
+	return
+
+	RestoreDefaultSettingsButton:
+		DeleteFile(settingsFilePath)
+		Reload	; Reload the script to apply the new settings.
+	return
 
 	SettingsCancelButton:	; Settings Cancel button was clicked.
 	2GuiClose:				; The window was closed (by clicking X or through task manager).
