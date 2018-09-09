@@ -28,7 +28,21 @@ You can also customize how often the alerts should trigger again if the Outlook 
 
 ## How To Run The App
 
-Simply [download the executable][DownloadLatestVersionOfExecutableUrl] and run it. If you want to have it run automatically when you log into Windows, copy a shortcut to it into [your startup directory][HowToOpenStartupDirectoryInstructionsUrl].
+Simply [download the executable][DownloadLatestVersionOfExecutableUrl] and run it. It will extract some additional resources to a NotifyWhenMicrosoftOutlookReminderWindowIsOpenResources directory, so you may want to put the executable in a directory like `C:\OutlookRemindersNotifier` rather than leaving it on your desktop or downloads directory.
+
+
+### Run Automatically When Logging Into Windows
+
+ If you want to have it run automatically when you log into Windows, copy a shortcut to it into [your startup directory][HowToOpenStartupDirectoryInstructionsUrl].
+
+ The steps to do this are:
+ 1. Right-click on the `NotifyWhenMicrosoftOutlookReminderWindowIsOpen.exe` file and choose `Create shortcut`.
+ 2. Right-click on the new shortcut file and choose `Cut`.
+ 3. Press the `Windows Key` and type `Run` to find and launch the `Run` application (or press the `Windows Key` + `r` to launch the app).
+ 4. In the Run application, type `shell:startup` and hit OK. This should open up your startup directory in File Explorer.
+ 5. Paste the shortcut into the startup directory.
+
+That's it. Now when you log into Windows the application should start automatically.
 
 
 ## Limitations / Quirks
