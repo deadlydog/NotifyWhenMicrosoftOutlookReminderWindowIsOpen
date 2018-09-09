@@ -28,7 +28,7 @@ You can also customize how often the alerts should trigger again if the Outlook 
 
 ## How To Run The App
 
-Simply [download the executable][DownloadLatestVersionOfExecutableUrl] and run it. If you want to have it run automatically when you log into Windows, copy the executable (or a shortcut to it) to [your startup directory][HowToOpenStartupDirectoryInstructionsUrl].
+Simply [download the executable][DownloadLatestVersionOfExecutableUrl] and run it. If you want to have it run automatically when you log into Windows, copy a shortcut to it into [your startup directory][HowToOpenStartupDirectoryInstructionsUrl].
 
 
 ## Limitations / Quirks
