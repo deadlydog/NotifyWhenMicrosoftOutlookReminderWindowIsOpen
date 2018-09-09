@@ -16,8 +16,8 @@ InitializeScript(AppResourcesDirectoryPath, AppTrayIconFilePath, MouseCursorImag
 ; Settings - Specify the default settings, then load any existing settings from the settings file.
 ;==========================================================
 Settings := {}	; Objects can be accessed with both associated array syntax (brackets) and object syntax (dots).
+Settings.ShowIconInSystemTray := { Value: true, Category: "General" }
 Settings.PromptUserToViewSettingsFileOnStartup := { Value: false, Category: "Startup" }
-Settings.ShowIconInSystemTray := { Value: true, Category: "Startup" }
 Settings.ShowWindowsNotificationOnStartup := { Value: true, Category: "Startup" }
 Settings.ShowWindowsNotificationAlert := { Value: true, Category: "Windows Notification Alert" }
 Settings.PlaySoundOnWindowsNotificationAlert := { Value: true, Category: "Windows Notification Alert" }
@@ -34,9 +34,11 @@ Settings := LoadSettingsFromFileIfExistsOrCreateFile(SettingsFilePath, Settings)
 ;==========================================================
 ; App Startup
 ;==========================================================
+AddSettingsMenuToSystemTray()
+
 if ((Settings.PromptUserToViewSettingsFileOnStartup).Value)
 {
-	Settings := PromptUserToAdjustSettingsAndGetUpdatedSettings(settingsFilePath, Settings)
+	Settings := PromptUserToAdjustSettingsAndGetUpdatedSettings(SettingsFilePath, Settings)
 }
 
 ApplyStartupSettings(Settings)
@@ -63,6 +65,14 @@ loop
 		ClearAlerts()
 	}
 }
+
+;==========================================================
+; Labels
+;==========================================================
+
+ShowSettingsWindowAndProvideParameters:
+	Settings := ShowSettingsWindow(SettingsFilePath, Settings)
+return
 
 ;==========================================================
 ; Functions
@@ -98,6 +108,12 @@ CreateMouseCursorImageFileIfItDoesNotExist(mouseCursorImageFilePath)
 	{
 		Extract_MouseCursorImageFile(mouseCursorImageFilePath)
 	}
+}
+
+AddSettingsMenuToSystemTray()
+{
+	Menu, Tray, Add
+	Menu, Tray, Add, Settings, ShowSettingsWindowAndProvideParameters
 }
 
 LoadSettingsFromFileIfExistsOrCreateFile(settingsFilePath, settings)
@@ -285,6 +301,131 @@ ClearAlerts()
 HideToolTip()
 {
 	ToolTip
+}
+
+ShowSettingsWindow(settingsFilePathParameter, settingsParameter)
+{
+	; Variables used for controls must be global, so define the global variables to use in the controls.
+	global settingsFilePath, settings, showSystemTrayIcon, showWindowsNotificationOnStartup, showWindowsNotificationAlert, playSoundOnWindowsNotificationAlert, showTooltipAlert, millisecondsToShowTooltipAlertFor, changeMouseCursorOnAlert, showTransparentWindowAlert, millisecondsToShowTransparentWindowAlertFor, secondsBeforeAlertsAreReTriggeredWhenOutlookRemindersWindowIsStillOpen, ensureOutlookRemindersWindowIsRestored, ensureOutlookRemindersWindowIsAlwaysOnTop
+
+	settingsFilePath := settingsFilePathParameter
+	settings := settingsParameter
+
+	; Get the values to show in the controls from the Settings.
+	showSystemTrayIcon := (settings.ShowIconInSystemTray).Value
+	showWindowsNotificationOnStartup := (settings.ShowWindowsNotificationOnStartup).Value
+	showWindowsNotificationAlert := (settings.ShowWindowsNotificationAlert).Value
+	playSoundOnWindowsNotificationAlert := (settings.PlaySoundOnWindowsNotificationAlert).Value
+	showTooltipAlert := (settings.ShowTooltipAlert).Value
+	millisecondsToShowTooltipAlertFor := (settings.MillisecondsToShowTooltipAlertFor).Value
+	changeMouseCursorOnAlert := (settings.ChangeMouseCursorOnAlert).Value
+	showTransparentWindowAlert := (settings.ShowTransparentWindowAlert).Value
+	millisecondsToShowTransparentWindowAlertFor := (settings.MillisecondsToShowTransparentWindowAlertFor).Value
+	secondsBeforeAlertsAreReTriggeredWhenOutlookRemindersWindowIsStillOpen := (settings.SecondsBeforeAlertsAreReTriggeredWhenOutlookRemindersWindowIsStillOpen).Value
+	ensureOutlookRemindersWindowIsRestored := (settings.EnsureOutlookRemindersWindowIsRestored).Value
+	ensureOutlookRemindersWindowIsAlwaysOnTop := (settings.EnsureOutlookRemindersWindowIsAlwaysOnTop).Value
+
+	Gui 2:Default	; Specify that these controls are for window #2.
+
+	; Create the GUI.
+	Gui, +AlwaysOnTop +Owner ToolWindow ; +Owner avoids a taskbar button ; +OwnDialogs makes any windows launched by this one modal ; ToolWindow makes border smaller and hides the min/maximize buttons.
+
+	; Add the controls to the GUI.
+	Gui, Add ,GroupBox, x10 w525 r3, General Settings:	; r3 means 3 rows tall.
+		Gui, Add, Checkbox, yp+25 x20 vshowSystemTrayIcon Checked%showSystemTrayIcon%, Show icon in the system tray
+
+		Gui, Add, Text, yp+25 x20, Seconds before alerts are re-triggered when Outlook reminder window is still open:
+		Gui, Add, Edit, x+5
+		Gui, Add, UpDown, vsecondsBeforeAlertsAreReTriggeredWhenOutlookRemindersWindowIsStillOpen Range30-3600, %secondsBeforeAlertsAreReTriggeredWhenOutlookRemindersWindowIsStillOpen%
+
+	Gui, Add ,GroupBox, x10 w525 r2, Startup Settings:
+		Gui, Add, Checkbox, yp+25 x20 vshowWindowsNotificationOnStartup Checked%showWindowsNotificationOnStartup%, Show Windows notification at startup
+
+	Gui, Add ,GroupBox, x10 w525 r3, Outlook Reminders Window:
+		Gui, Add, Checkbox, yp+25 x20 vensureOutlookRemindersWindowIsRestored Checked%ensureOutlookRemindersWindowIsRestored%, Ensure Outlook reminders window is not minimized
+		Gui, Add, Checkbox, yp+25 x20 vensureOutlookRemindersWindowIsAlwaysOnTop Checked%ensureOutlookRemindersWindowIsAlwaysOnTop%, Ensure Outlook reminders window is on top of all other windows
+
+	Gui, Add ,GroupBox, x10 w525 r3, Windows Notification Alerts:
+		Gui, Add, Checkbox, yp+25 x20 vshowWindowsNotificationAlert gShowWindowsNotificationAlertToggled Checked%showWindowsNotificationAlert%, Show Windows notification alert
+		Gui, Add, Checkbox, yp+25 x20 vplaySoundOnWindowsNotificationAlert Checked%playSoundOnWindowsNotificationAlert%, Play sound on alert
+
+	Gui, Add ,GroupBox, x10 w525 r3, Tooltip Alerts:
+		Gui, Add, Checkbox, yp+25 x20 vshowTooltipAlert gShowTooltipAlertToggled Checked%showTooltipAlert%, Show Tooltip alert
+
+		Gui, Add, Text, yp+25 x20, Milliseconds to show Tooltip for
+		Gui, Add, Edit, x+5
+		Gui, Add, UpDown, yp+25 x20 vmillisecondsToShowTooltipAlertFor Range1-60000, %millisecondsToShowTooltipAlertFor%
+
+	Gui, Add ,GroupBox, x10 w525 r2, Mouse Cursor Alerts:
+		Gui, Add, Checkbox, yp+25 x20 vchangeMouseCursorOnAlert Checked%changeMouseCursorOnAlert%, Change mouse cursor during alert
+
+	Gui, Add ,GroupBox, x10 w525 r3, Transparent Window Alerts:
+		Gui, Add, Checkbox, yp+25 x20 vshowTransparentWindowAlert gShowTransparentWindowAlertToggled Checked%showTransparentWindowAlert%, Show transparent window alert
+
+		Gui, Add, Text, yp+25 x20, Milliseconds to show transparent window for
+		Gui, Add, Edit, x+5
+		Gui, Add, UpDown, yp+25 x20 vmillisecondsToShowTransparentWindowAlertFor Range1-60000, %millisecondsToShowTransparentWindowAlertFor%
+
+	Gui, Add, Button, gSettingsCancelButton xm w100, Cancel
+	Gui, Add, Button, gSettingsSaveButton x+325 w100, Save
+
+	; Show the GUI, set focus to the input box, and wait for input.
+	Gui, Show, AutoSize Center, Notify When Outlook Reminder Window Is Open - Settings
+
+	return  ; End of auto-execute section. The script is idle until the user does something.
+
+	ShowWindowsNotificationAlertToggled:
+		Gui 2:Submit, NoHide	; Get the values from the GUI controls without closing the GUI.
+
+		; Enable or disable other settings controls based on if the alert is enabled or not.
+		if (showWindowsNotificationAlert)
+			GuiControl, Enable, playSoundOnWindowsNotificationAlert
+		else
+			GuiControl, Disable, playSoundOnWindowsNotificationAlert
+	return
+
+	ShowTooltipAlertToggled:
+		Gui 2:Submit, NoHide	; Get the values from the GUI controls without closing the GUI.
+
+		; Enable or disable other settings controls based on if the alert is enabled or not.
+		if (showTooltipAlert)
+			GuiControl, Enable, millisecondsToShowTooltipAlertFor
+		else
+			GuiControl, Disable, millisecondsToShowTooltipAlertFor
+	return
+
+	ShowTransparentWindowAlertToggled:
+		Gui 2:Submit, NoHide	; Get the values from the GUI controls without closing the GUI.
+
+		; Enable or disable other settings controls based on if the alert is enabled or not.
+		if (showTransparentWindowAlert)
+			GuiControl, Enable, millisecondsToShowTransparentWindowAlertFor
+		else
+			GuiControl, Disable, millisecondsToShowTransparentWindowAlertFor
+	return
+
+	SettingsSaveButton:		; Settings Save button was clicked.
+		Gui 2:Submit, NoHide	; Get the values from the GUI controls without closing the GUI.
+		(settings.ShowIconInSystemTray).Value := showSystemTrayIcon
+		(settings.ShowWindowsNotificationOnStartup).Value := showWindowsNotificationOnStartup
+		(settings.ShowWindowsNotificationAlert).Value := showWindowsNotificationAlert
+		(settings.PlaySoundOnWindowsNotificationAlert).Value := playSoundOnWindowsNotificationAlert
+		(settings.ShowTooltipAlert).Value := showTooltipAlert
+		(settings.MillisecondsToShowTooltipAlertFor).Value := millisecondsToShowTooltipAlertFor
+		(settings.ChangeMouseCursorOnAlert).Value := changeMouseCursorOnAlert
+		(settings.ShowTransparentWindowAlert).Value := showTransparentWindowAlert
+		(settings.MillisecondsToShowTransparentWindowAlertFor).Value := millisecondsToShowTransparentWindowAlertFor
+		(settings.SecondsBeforeAlertsAreReTriggeredWhenOutlookRemindersWindowIsStillOpen).Value := secondsBeforeAlertsAreReTriggeredWhenOutlookRemindersWindowIsStillOpen
+		(settings.EnsureOutlookRemindersWindowIsRestored).Value := ensureOutlookRemindersWindowIsRestored
+		(settings.EnsureOutlookRemindersWindowIsAlwaysOnTop).Value := ensureOutlookRemindersWindowIsAlwaysOnTop
+		SaveSettingsToFile(settingsFilePath, settings)	; Save the settings before loading them again.
+
+	SettingsCancelButton:	; Settings Cancel button was clicked.
+	2GuiClose:				; The window was closed (by clicking X or through task manager).
+	2GuiEscape:				; The Escape key was pressed.
+		settings := LoadSettingsFromFile(settingsFilePath, settings)	; If user pressed Cancel the old settings will be loaded. If they pressed Save the saved settings will be loaded.
+		Gui, 2:Destroy		; Close the GUI, but leave the script running.
+	return settings
 }
 
 ;----------------------------------------------------------
