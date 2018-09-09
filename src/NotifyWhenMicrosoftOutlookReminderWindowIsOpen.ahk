@@ -174,12 +174,11 @@ SaveSettingsToFile(settingsFilePath, settings)
 
 PromptUserToAdjustSettingsAndGetUpdatedSettings(settingsFilePath, settings)
 {
-	MsgBox, 4, Open Settings File?, It seems this is the first time launching the Notify When Microsoft Outlook Reminder Window Is Open application.`n`nWould you like to view the settings file now to make changes to it?`n`n%settingsFilePath%
+	MsgBox, 4, Open Settings?, It seems this is the first time launching the Notify When Microsoft Outlook Reminder Window Is Open application.`n`nWould you like to view the settings?
 
 	IfMsgBox, Yes
 	{
-		RunWait, edit %settingsFilePath%
-		settings := LoadSettingsFromFile(settingsFilePath, settings)
+		settings := ShowSettingsWindow(settingsFilePath, settings)
 	}
 
 	return settings
