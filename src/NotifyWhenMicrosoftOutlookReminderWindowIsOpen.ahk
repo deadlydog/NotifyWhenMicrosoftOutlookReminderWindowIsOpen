@@ -341,7 +341,7 @@ ShowSettingsWindow(settingsFilePathParameter, settingsParameter)
 
 	; Add the controls to the GUI.
 	Gui, Add ,GroupBox, x10 w525 r3, General Settings:	; r3 means 3 rows tall.
-		Gui, Add, Checkbox, yp+25 x20 vshowSystemTrayIcon Checked%showSystemTrayIcon%, Show icon in the system tray
+		Gui, Add, Checkbox, yp+25 x20 vshowSystemTrayIcon gShowSystemTrayIconToggled Checked%showSystemTrayIcon%, Show icon in the system tray
 
 		Gui, Add, Text, yp+25 x20, Seconds before alerts are re-triggered when Outlook reminder window is still open:
 		Gui, Add, Edit, x+5
@@ -383,6 +383,16 @@ ShowSettingsWindow(settingsFilePathParameter, settingsParameter)
 	Gui, Show, AutoSize Center, Notify When Outlook Reminder Window Is Open - Settings
 
 	return  ; End of auto-execute section. The script is idle until the user does something.
+
+	ShowSystemTrayIconToggled:
+		Gui 2:Submit, NoHide	; Get the values from the GUI controls without closing the GUI.
+
+		if (!showSystemTrayIcon)
+		{
+			; For options: 4096 (always on top) + 48 (exclamation icon) = 4144
+			MsgBox, 4144, Warning, If you disable the system tray icon the only way to access the settings again will be to manually edit (or simply delete) the settings file located at:`n`n%settingsFilePath%
+		}
+	return
 
 	ShowWindowsNotificationAlertToggled:
 		Gui 2:Submit, NoHide	; Get the values from the GUI controls without closing the GUI.
