@@ -28,7 +28,7 @@ You can also customize how often the alerts should trigger again if the Outlook 
 
 ## How To Run The App
 
-Simply [download the executable][DownloadLatestVersionOfExecutableUrl] and run it. It will extract some additional resources to a NotifyWhenMicrosoftOutlookReminderWindowIsOpenResources directory, so you may want to put the executable in a directory like `C:\OutlookRemindersNotifier` rather than leaving it on your desktop or downloads directory.
+Simply [download the executable][DownloadLatestVersionOfExecutableUrl] and run it. It will extract some additional resources to a `NotifyWhenMicrosoftOutlookReminderWindowIsOpenResources` directory, so you may want to put the executable in a directory like `C:\OutlookRemindersNotifier`, rather than leaving it on your desktop or downloads directory.
 
 
 ### Run Automatically When Logging Into Windows
