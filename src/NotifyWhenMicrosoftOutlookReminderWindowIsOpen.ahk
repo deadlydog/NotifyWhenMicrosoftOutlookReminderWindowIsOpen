@@ -1,3 +1,5 @@
+#SingleInstance, force
+
 ;==========================================================
 ; Constant Variables
 ;==========================================================
@@ -71,7 +73,7 @@ loop
 ;==========================================================
 
 ShowSettingsWindowAndProvideParameters:
-	Settings := ShowSettingsWindow(SettingsFilePath, Settings)
+	ShowSettingsWindow(SettingsFilePath, Settings)
 return
 
 ;==========================================================
@@ -178,10 +180,8 @@ PromptUserToAdjustSettingsAndGetUpdatedSettings(settingsFilePath, settings)
 
 	IfMsgBox, Yes
 	{
-		settings := ShowSettingsWindow(settingsFilePath, settings)
+		ShowSettingsWindow(settingsFilePath, settings)
 	}
-
-	return settings
 }
 
 ApplyStartupSettings(settings)
@@ -418,13 +418,13 @@ ShowSettingsWindow(settingsFilePathParameter, settingsParameter)
 		(settings.EnsureOutlookRemindersWindowIsRestored).Value := ensureOutlookRemindersWindowIsRestored
 		(settings.EnsureOutlookRemindersWindowIsAlwaysOnTop).Value := ensureOutlookRemindersWindowIsAlwaysOnTop
 		SaveSettingsToFile(settingsFilePath, settings)	; Save the settings before loading them again.
+		Reload	; Reload the script to apply the new settings.
 
 	SettingsCancelButton:	; Settings Cancel button was clicked.
 	2GuiClose:				; The window was closed (by clicking X or through task manager).
 	2GuiEscape:				; The Escape key was pressed.
-		settings := LoadSettingsFromFile(settingsFilePath, settings)	; If user pressed Cancel the old settings will be loaded. If they pressed Save the saved settings will be loaded.
 		Gui, 2:Destroy		; Close the GUI, but leave the script running.
-	return settings
+	return
 }
 
 ;----------------------------------------------------------
