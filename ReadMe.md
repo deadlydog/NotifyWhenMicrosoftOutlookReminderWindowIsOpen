@@ -13,15 +13,20 @@ This often results in you being late to meetings or appointments simply because 
 This is a simple executable that will run in the background and watch for the Microsoft Outlook reminder window to open, and then perform some actions to try and make it more aparent to you that the window has opened (i.e. that a reminder has gone off).
 
 
+## Settings
+
+To access the settings, right-click the icon in the Windows system tray and choose `Settings`. You will also be prompted to view the settings the first time the application is launched.
+
 ### Configurable Alerts
 
-The actions taken to try and grab your attention are configurable, so you can customize it to be as subtle or obtrusive as you like.
+The actions taken to try and grab your attention are configurable, so you can customize it to be as subtle or obtrusive as you like. Some available settings include:
 
 * Ensure the Outlook reminders window is restored (not minimized or maximized).
 * Set the Outlook reminders window to "always on top" to ensure it is not hidden behind other windows.
 * Show a Windows notification when the Outlook reminders window appears.
 * Display a tooltip at the mouse's position when the Outlook reminders window appears.
 * Change the mouse cursor when the Outlook reminders window appears (until the window is closed).
+* Display a transparent window briefly when the Outlook reminders window appears.
 
 You can also customize how often the alerts should trigger again if the Outlook reminders window remains open.
 
