@@ -329,6 +329,11 @@ ShowSettingsWindow(settingsFilePathParameter, settingsParameter)
 	; Create the GUI.
 	Gui, +AlwaysOnTop +Owner ToolWindow ; +Owner avoids a taskbar button ; +OwnDialogs makes any windows launched by this one modal ; ToolWindow makes border smaller and hides the min/maximize buttons.
 
+	; Determine if certain controls should be disabled or not.
+	windowsNotificationAlertsAreDisabled := !showWindowsNotificationAlert
+	tooltipAlertsAreDisabled := !showTooltipAlert
+	transparentWindowAlertsAreDisabled := !showTransparentWindowAlert
+
 	; Add the controls to the GUI.
 	Gui, Add ,GroupBox, x10 w525 r3, General Settings:	; r3 means 3 rows tall.
 		Gui, Add, Checkbox, yp+25 x20 vshowSystemTrayIcon Checked%showSystemTrayIcon%, Show icon in the system tray
@@ -346,14 +351,14 @@ ShowSettingsWindow(settingsFilePathParameter, settingsParameter)
 
 	Gui, Add ,GroupBox, x10 w525 r3, Windows Notification Alerts:
 		Gui, Add, Checkbox, yp+25 x20 vshowWindowsNotificationAlert gShowWindowsNotificationAlertToggled Checked%showWindowsNotificationAlert%, Show Windows notification alert
-		Gui, Add, Checkbox, yp+25 x20 vplaySoundOnWindowsNotificationAlert Checked%playSoundOnWindowsNotificationAlert%, Play sound on alert
+		Gui, Add, Checkbox, yp+25 x20 vplaySoundOnWindowsNotificationAlert Checked%playSoundOnWindowsNotificationAlert% Disabled%windowsNotificationAlertsAreDisabled%, Play sound on alert
 
 	Gui, Add ,GroupBox, x10 w525 r3, Tooltip Alerts:
 		Gui, Add, Checkbox, yp+25 x20 vshowTooltipAlert gShowTooltipAlertToggled Checked%showTooltipAlert%, Show Tooltip alert
 
 		Gui, Add, Text, yp+25 x20, Milliseconds to show Tooltip for
 		Gui, Add, Edit, x+5
-		Gui, Add, UpDown, yp+25 x20 vmillisecondsToShowTooltipAlertFor Range1-60000, %millisecondsToShowTooltipAlertFor%
+		Gui, Add, UpDown, yp+25 x20 vmillisecondsToShowTooltipAlertFor Range1-60000 Disabled%tooltipAlertsAreDisabled%, %millisecondsToShowTooltipAlertFor%
 
 	Gui, Add ,GroupBox, x10 w525 r2, Mouse Cursor Alerts:
 		Gui, Add, Checkbox, yp+25 x20 vchangeMouseCursorOnAlert Checked%changeMouseCursorOnAlert%, Change mouse cursor during alert
@@ -363,7 +368,7 @@ ShowSettingsWindow(settingsFilePathParameter, settingsParameter)
 
 		Gui, Add, Text, yp+25 x20, Milliseconds to show transparent window for
 		Gui, Add, Edit, x+5
-		Gui, Add, UpDown, yp+25 x20 vmillisecondsToShowTransparentWindowAlertFor Range1-60000, %millisecondsToShowTransparentWindowAlertFor%
+		Gui, Add, UpDown, yp+25 x20 vmillisecondsToShowTransparentWindowAlertFor Range1-60000 Disabled%transparentWindowAlertsAreDisabled%, %millisecondsToShowTransparentWindowAlertFor%
 
 	Gui, Add, Button, gSettingsCancelButton xm w100, Cancel
 	Gui, Add, Button, gSettingsSaveButton x+325 w100, Save
