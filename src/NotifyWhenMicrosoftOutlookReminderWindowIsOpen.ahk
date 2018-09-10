@@ -8,6 +8,7 @@ AppTrayIconFilePath := AppResourcesDirectoryPath . "\AppIcon.ico"	; Define where
 MouseCursorImageFilePath :=  AppResourcesDirectoryPath . "\MouseCursor.ani"	; Define where to unpack the mouse cursor image file to.
 SettingsFilePath := AppResourcesDirectoryPath . "\Settings.ini"
 OutlookRemindersWindowTitleTextToMatch := "Reminder(s)"
+ApplicationVersionNumber := "v1.0.0"
 
 ;==========================================================
 ; Script Initialization
@@ -40,7 +41,7 @@ AddSettingsMenuToSystemTray()
 
 if ((Settings.PromptUserToViewSettingsFileOnStartup).Value)
 {
-	Settings := PromptUserToAdjustSettingsAndGetUpdatedSettings(SettingsFilePath, Settings)
+	Settings := PromptUserToAdjustSettingsAndGetUpdatedSettings(SettingsFilePath, Settings, ApplicationVersionNumber)
 }
 
 ApplyStartupSettings(Settings)
@@ -73,7 +74,7 @@ loop
 ;==========================================================
 
 ShowSettingsWindowAndProvideParameters:
-	ShowSettingsWindow(SettingsFilePath, Settings)
+	ShowSettingsWindow(SettingsFilePath, Settings, ApplicationVersionNumber)
 return
 
 ;==========================================================
@@ -179,13 +180,13 @@ DeleteFile(filePath)
 	}
 }
 
-PromptUserToAdjustSettingsAndGetUpdatedSettings(settingsFilePath, settings)
+PromptUserToAdjustSettingsAndGetUpdatedSettings(settingsFilePath, settings, applicationVersionNumber)
 {
 	MsgBox, 4, Open Settings?, It seems this is the first time launching the Notify When Microsoft Outlook Reminder Window Is Open application.`n`nWould you like to view the settings?
 
 	IfMsgBox, Yes
 	{
-		ShowSettingsWindow(settingsFilePath, settings)
+		ShowSettingsWindow(settingsFilePath, settings, applicationVersionNumber)
 	}
 }
 
@@ -307,7 +308,7 @@ HideToolTip()
 	ToolTip
 }
 
-ShowSettingsWindow(settingsFilePathParameter, settingsParameter)
+ShowSettingsWindow(settingsFilePathParameter, settingsParameter, applicationVersionNumber)
 {
 	; Variables used for controls must be global, so define the global variables to use in the controls.
 	global settingsFilePath, settings, showSystemTrayIcon, showWindowsNotificationOnStartup, showWindowsNotificationAlert, playSoundOnWindowsNotificationAlert, showTooltipAlert, millisecondsToShowTooltipAlertFor, changeMouseCursorOnAlert, showTransparentWindowAlert, millisecondsToShowTransparentWindowAlertFor, secondsBeforeAlertsAreReTriggeredWhenOutlookRemindersWindowIsStillOpen, ensureOutlookRemindersWindowIsRestored, ensureOutlookRemindersWindowIsAlwaysOnTop
@@ -380,7 +381,7 @@ ShowSettingsWindow(settingsFilePathParameter, settingsParameter)
 	Gui, Add, Button, gSettingsSaveButton x+25 w100, Save
 
 	; Show the GUI, set focus to the input box, and wait for input.
-	Gui, Show, AutoSize Center, Notify When Outlook Reminder Window Is Open - Settings
+	Gui, Show, AutoSize Center, Notify When Outlook Reminder Window Is Open %applicationVersionNumber% - Settings
 
 	return  ; End of auto-execute section. The script is idle until the user does something.
 
