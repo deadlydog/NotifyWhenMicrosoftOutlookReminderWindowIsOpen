@@ -362,12 +362,12 @@ ShowSettingsWindow(settingsFilePathParameter, settingsParameter, applicationVers
 	Gui, Add ,GroupBox, x10 w525 r3, Tooltip Alerts:
 		Gui, Add, Checkbox, yp+25 x20 vshowTooltipAlert gShowTooltipAlertToggled Checked%showTooltipAlert%, Show Tooltip alert
 
-		Gui, Add, Text, yp+25 x20, Milliseconds to show Tooltip for
+		Gui, Add, Text, yp+25 x20, Milliseconds to show tooltip for
 		Gui, Add, Edit, x+5
 		Gui, Add, UpDown, yp+25 x20 vmillisecondsToShowTooltipAlertFor Range1-60000 Disabled%tooltipAlertsAreDisabled%, %millisecondsToShowTooltipAlertFor%
 
 	Gui, Add ,GroupBox, x10 w525 r2, Mouse Cursor Alerts:
-		Gui, Add, Checkbox, yp+25 x20 vchangeMouseCursorOnAlert Checked%changeMouseCursorOnAlert%, Change mouse cursor during alert
+		Gui, Add, Checkbox, yp+25 x20 vchangeMouseCursorOnAlert Checked%changeMouseCursorOnAlert%, Change mouse cursor while Outlook reminders window is open
 
 	Gui, Add ,GroupBox, x10 w525 r3, Transparent Window Alerts:
 		Gui, Add, Checkbox, yp+25 x20 vshowTransparentWindowAlert gShowTransparentWindowAlertToggled Checked%showTransparentWindowAlert%, Show transparent window alert
