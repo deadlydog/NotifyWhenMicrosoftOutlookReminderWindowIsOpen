@@ -8,7 +8,7 @@ AppTrayIconFilePath := AppResourcesDirectoryPath . "\AppIcon.ico"	; Define where
 MouseCursorImageFilePath :=  AppResourcesDirectoryPath . "\MouseCursor.ani"	; Define where to unpack the mouse cursor image file to.
 SettingsFilePath := AppResourcesDirectoryPath . "\Settings.ini"
 OutlookRemindersWindowTitleTextToMatch := "Reminder(s)"
-ApplicationVersionNumber := "v1.0.0"
+ApplicationVersionNumber := "v1.0.1"
 
 ;==========================================================
 ; Script Initialization
