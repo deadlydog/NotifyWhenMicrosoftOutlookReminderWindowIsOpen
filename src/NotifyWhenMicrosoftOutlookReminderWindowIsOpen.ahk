@@ -41,7 +41,7 @@ AddSettingsMenuToSystemTray()
 
 if ((Settings.PromptUserToViewSettingsFileOnStartup).Value)
 {
-	Settings := PromptUserToAdjustSettingsAndGetUpdatedSettings(SettingsFilePath, Settings, ApplicationVersionNumber)
+	PromptUserToAdjustSettingsAndGetUpdatedSettings(SettingsFilePath, Settings, ApplicationVersionNumber)
 }
 
 ApplyStartupSettings(Settings)
