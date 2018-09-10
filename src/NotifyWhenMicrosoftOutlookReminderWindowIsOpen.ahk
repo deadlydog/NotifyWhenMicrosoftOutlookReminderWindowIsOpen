@@ -439,6 +439,7 @@ ShowSettingsWindow(settingsFilePathParameter, settingsParameter, applicationVers
 		(settings.SecondsBeforeAlertsAreReTriggeredWhenOutlookRemindersWindowIsStillOpen).Value := secondsBeforeAlertsAreReTriggeredWhenOutlookRemindersWindowIsStillOpen
 		(settings.EnsureOutlookRemindersWindowIsRestored).Value := ensureOutlookRemindersWindowIsRestored
 		(settings.EnsureOutlookRemindersWindowIsAlwaysOnTop).Value := ensureOutlookRemindersWindowIsAlwaysOnTop
+		(settings.PromptUserToViewSettingsFileOnStartup).Value := false	; The user has seen the settings, so we don't need to prompt them to see them again.
 		SaveSettingsToFile(settingsFilePath, settings)	; Save the settings before loading them again.
 		Reload	; Reload the script to apply the new settings.
 	return
