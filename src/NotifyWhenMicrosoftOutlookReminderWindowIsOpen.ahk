@@ -3,12 +3,12 @@
 ;==========================================================
 ; Constant Variables
 ;==========================================================
+ApplicationVersionNumber := "v1.0.1"
 AppResourcesDirectoryPath := A_ScriptDir . "\NotifyWhenMicrosoftOutlookReminderWindowIsOpenResources"
 AppTrayIconFilePath := AppResourcesDirectoryPath . "\AppIcon.ico"	; Define where to unpack the mouse cursor image file to.
 MouseCursorImageFilePath :=  AppResourcesDirectoryPath . "\MouseCursor.ani"	; Define where to unpack the mouse cursor image file to.
 SettingsFilePath := AppResourcesDirectoryPath . "\Settings.ini"
 OutlookRemindersWindowTitleTextToMatch := "Reminder(s)"
-ApplicationVersionNumber := "v1.0.1"
 
 ;==========================================================
 ; Script Initialization
