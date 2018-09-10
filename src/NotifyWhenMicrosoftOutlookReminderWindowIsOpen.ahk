@@ -136,7 +136,7 @@ LoadSettingsFromFileIfExistsOrCreateFile(settingsFilePath, settings)
 	; Save the settings after loading them in order to make sure the settings file is created if it doesn't exist, and so any new settings added in a new version get written to the file.
 	SaveSettingsToFile(settingsFilePath, settings)
 
-	; The settings file did not previously exist, so the user likely has not seen the settings yet, so mark that we should prompt them to view them.
+	; If the settings file did not previously exist, the user likely has not seen the settings yet, so mark that we should prompt them to view them.
 	if (!settingsFileAlreadyExisted)
 	{
 		(settings.PromptUserToViewSettingsFileOnStartup).Value := true
