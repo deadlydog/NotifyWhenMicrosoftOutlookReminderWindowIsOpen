@@ -30,6 +30,8 @@ The actions taken to try and grab your attention are configurable, so you can cu
 
 You can also customize how often the alerts should trigger again if the Outlook reminders window remains open.
 
+![Alerts Demo Gif][AlertsDemoGif]
+
 
 ## How To Run The App
 
@@ -67,3 +69,4 @@ This script started from [this Stack Overflow answer][StackOverflowPostThatScrip
 [HowToOpenStartupDirectoryInstructionsUrl]: https://www.thewindowsclub.com/startup-folder-in-windows-8
 [StackOverflowPostThatScriptStartedFromUrl]: https://stackoverflow.com/a/35154133/602585
 [OutlookBetterRemindersOutlookAddinGitHubUrl]: https://ben-spiller.github.io/OutlookBetterReminders/
+[AlertsDemoGif]: docs/Images/AlertsDemo.gif
