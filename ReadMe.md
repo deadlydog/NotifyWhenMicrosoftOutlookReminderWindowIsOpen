@@ -9,7 +9,7 @@ This often results in you being late to meetings or appointments simply because 
 
 ## This App's Solution
 
-This is a simple executable that will run in the background and watch for the Microsoft Outlook reminder window to open, and then perform some actions to try and make it more aparent to you that the window has opened, so you are less likely to miss your reminders.
+This is a simple executable that will run in the background and watch for the Microsoft Outlook reminder window to open, and then perform some actions to try and make it more apparent to you that the window has opened, so you are less likely to miss your reminders.
 
 ## Settings
 
