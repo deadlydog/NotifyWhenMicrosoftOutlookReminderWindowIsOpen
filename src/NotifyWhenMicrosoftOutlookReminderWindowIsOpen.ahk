@@ -182,6 +182,7 @@ DeleteFile(filePath)
 
 PromptUserToAdjustSettingsAndGetUpdatedSettings(settingsFilePath, settings, applicationVersionNumber)
 {
+	; Options parameter 4 == Yes/No prompt.
 	MsgBox, 4, Open Settings?, It seems this is the first time launching the Notify When Microsoft Outlook Reminder Window Is Open application.`n`nWould you like to view the settings?
 
 	IfMsgBox, Yes
