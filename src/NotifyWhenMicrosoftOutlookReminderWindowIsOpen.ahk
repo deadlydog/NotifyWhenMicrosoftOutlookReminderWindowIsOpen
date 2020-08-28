@@ -52,18 +52,21 @@ SetTitleMatchMode 2	; Use "title contains text" mode to match windows.
 ;==========================================================
 loop
 {
+	; Copy required settings values into local variables to be easily used.
+	outlookRemindersWindowTitleTextToMatch := (Settings.OutlookRemindersWindowTitleTextToMatch).Value
+	secondsToWaitForWindowToBeClosed := (Settings.SecondsBeforeAlertsAreReTriggeredWhenOutlookRemindersWindowIsStillOpen).Value
+
 	; Wait for the window to appear.
-	WinWait, (Settings.OutlookRemindersWindowTitleTextToMatch).Value,
+	WinWait, %outlookRemindersWindowTitleTextToMatch%,
 
 	; Display any alerts about the window appearing.
 	TriggerAlerts(Settings, MouseCursorImageFilePath)
 
 	; Wait for the window to close, or for the timeout period to elapse.
-	secondsToWaitForWindowToBeClosed := (Settings.SecondsBeforeAlertsAreReTriggeredWhenOutlookRemindersWindowIsStillOpen).Value
-	WinWaitClose, (Settings.OutlookRemindersWindowTitleTextToMatch).Value, , %secondsToWaitForWindowToBeClosed%
+	WinWaitClose, %outlookRemindersWindowTitleTextToMatch%, , %secondsToWaitForWindowToBeClosed%
 
 	; If the window was closed, clear any remaining alerts about the window having appeared.
-	IfWinNotExist, (Settings.OutlookRemindersWindowTitleTextToMatch).Value
+	IfWinNotExist, %outlookRemindersWindowTitleTextToMatch%
 	{
 		ClearAlerts()
 	}
@@ -217,14 +220,17 @@ ShowAHKScriptIconInSystemTray(showIconInSystemTray)
 
 TriggerAlerts(settings, mouseCursorImageFilePath)
 {
+	; Copy required settings values into local variables to be easily used.
+	outlookRemindersWindowTitleTextToMatch := (Settings.OutlookRemindersWindowTitleTextToMatch).Value
+
 	if ((settings.EnsureOutlookRemindersWindowIsRestored).Value)
 	{
-		WinRestore, (settings.OutlookRemindersWindowTitleTextToMatch).Value	; Make sure the window is not minimized or maximized.
+		WinRestore, %outlookRemindersWindowTitleTextToMatch%	; Make sure the window is not minimized or maximized.
 	}
 
 	if ((settings.EnsureOutlookRemindersWindowIsAlwaysOnTop).Value)
 	{
-		WinSet, AlwaysOnTop, on, (settings.OutlookRemindersWindowTitleTextToMatch).Value
+		WinSet, AlwaysOnTop, on, %outlookRemindersWindowTitleTextToMatch%
 	}
 
 	if ((settings.ShowWindowsNotificationAlert).Value)
