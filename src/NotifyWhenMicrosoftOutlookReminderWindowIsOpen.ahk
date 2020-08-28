@@ -18,7 +18,6 @@ InitializeScript(AppResourcesDirectoryPath, AppTrayIconFilePath, MouseCursorImag
 ; Settings - Specify the default settings, then load any existing settings from the settings file.
 ;==========================================================
 Settings := {}	; Objects can be accessed with both associated array syntax (brackets) and object syntax (dots).
-Settings.OutlookRemindersWindowTitleTextToMatch := { Value: "Reminder(s)", Category: "General" }
 Settings.ShowIconInSystemTray := { Value: true, Category: "General" }
 Settings.PromptUserToViewSettingsFileOnStartup := { Value: false, Category: "Startup" }
 Settings.ShowWindowsNotificationOnStartup := { Value: true, Category: "Startup" }
@@ -32,6 +31,8 @@ Settings.MillisecondsToShowTransparentWindowAlertFor := { Value: 3000, Category:
 Settings.SecondsBeforeAlertsAreReTriggeredWhenOutlookRemindersWindowIsStillOpen := { Value: 30, Category: "General" }
 Settings.EnsureOutlookRemindersWindowIsRestored := { Value: true, Category: "Outlook Reminders Window" }
 Settings.EnsureOutlookRemindersWindowIsAlwaysOnTop := { Value: true, Category: "Outlook Reminders Window" }
+Settings.OutlookRemindersWindowTitleTextToMatch := { Value: "Reminder(s)", Category: "Advanced" }
+Settings.OutlookProcessName := { Value: "Outlook.exe", Category: "Advanced" }
 Settings := LoadSettingsFromFileIfExistsOrCreateFile(SettingsFilePath, Settings)
 
 ;==========================================================
@@ -54,13 +55,14 @@ Loop
 {
 	; Copy required settings values into local variables to be easily used.
 	outlookRemindersWindowTitleTextToMatch := (Settings.OutlookRemindersWindowTitleTextToMatch).Value
+	outlookProcessName := (Settings.OutlookProcessName).Value
 	secondsToWaitForWindowToBeClosed := (Settings.SecondsBeforeAlertsAreReTriggeredWhenOutlookRemindersWindowIsStillOpen).Value
 
 	; Wait for a window with the matching Outlook reminders text in it's title to appear.
 	WinWait, %outlookRemindersWindowTitleTextToMatch%,
 
 	; Get the ID of the window if it does indeed belong to the Outlook process.
-	outlookRemindersWindowId := GetOutlookRemindersWindowId(outlookRemindersWindowTitleTextToMatch)
+	outlookRemindersWindowId := GetOutlookRemindersWindowId(outlookRemindersWindowTitleTextToMatch,outlookProcessName)
 
 	; If the found window doesn't belong to Outlook.exe, keep waiting for the actual Outlook reminders window.
 	if (outlookRemindersWindowId = 0)
@@ -75,7 +77,7 @@ Loop
 	WinWaitClose, ahk_id %outlookRemindersWindowId%, , %secondsToWaitForWindowToBeClosed%
 
 	; If the window was closed, clear any remaining alerts about the window having appeared.
-	outlookRemindersWindowId := GetOutlookRemindersWindowId(outlookRemindersWindowTitleTextToMatch)
+	outlookRemindersWindowId := GetOutlookRemindersWindowId(outlookRemindersWindowTitleTextToMatch, outlookProcessName)
 	outlookRemindersWindowWasClosed := outlookRemindersWindowId = 0
 	if (outlookRemindersWindowWasClosed = true)
 	{
@@ -229,15 +231,15 @@ ShowAHKScriptIconInSystemTray(showIconInSystemTray)
 	}
 }
 
-GetOutlookRemindersWindowId(outlookRemindersWindowTitleTextToMatch)
+GetOutlookRemindersWindowId(outlookRemindersWindowTitleTextToMatch, outlookProcessName)
 {
-	; Get all of the windows that belong to the Outlook.exe process to be sure the found window does.
-	WinGet, outlookWindowIds, List, ahk_exe Outlook.exe
+	; Get all of the windows that belong to the Outlook process so we can check if the found window does.
+	WinGet, outlookWindowIds, List, ahk_exe %outlookProcessName%
 
-	; Get the ID of the found window.
+	; Get the ID of the found windows.
 	WinGet, reminderWindowIds, List, %outlookRemindersWindowTitleTextToMatch%
 
-	; Determine if the found window belongs to the Outlook process or not.
+	; Determine if one of the found windows belongs to the Outlook process or not and return it's ID if it does.
 	outlookRemindersWindowId := 0
 	Loop, %outlookWindowIds%
 	{
@@ -355,13 +357,12 @@ HideToolTip()
 ShowSettingsWindow(settingsFilePathParameter, settingsParameter, applicationVersionNumber)
 {
 	; Variables used for controls must be global, so define the global variables to use in the controls.
-	global settingsFilePath, settings, outlookRemindersWindowTitleTextToMatch, showSystemTrayIcon, showWindowsNotificationOnStartup, showWindowsNotificationAlert, playSoundOnWindowsNotificationAlert, showTooltipAlert, millisecondsToShowTooltipAlertFor, changeMouseCursorOnAlert, showTransparentWindowAlert, millisecondsToShowTransparentWindowAlertFor, secondsBeforeAlertsAreReTriggeredWhenOutlookRemindersWindowIsStillOpen, ensureOutlookRemindersWindowIsRestored, ensureOutlookRemindersWindowIsAlwaysOnTop
+	global settingsFilePath, settings, showSystemTrayIcon, showWindowsNotificationOnStartup, showWindowsNotificationAlert, playSoundOnWindowsNotificationAlert, showTooltipAlert, millisecondsToShowTooltipAlertFor, changeMouseCursorOnAlert, showTransparentWindowAlert, millisecondsToShowTransparentWindowAlertFor, secondsBeforeAlertsAreReTriggeredWhenOutlookRemindersWindowIsStillOpen, ensureOutlookRemindersWindowIsRestored, ensureOutlookRemindersWindowIsAlwaysOnTop, outlookRemindersWindowTitleTextToMatch, outlookProcessName
 
 	settingsFilePath := settingsFilePathParameter
 	settings := settingsParameter
 
 	; Get the values to show in the controls from the Settings.
-	outlookRemindersWindowTitleTextToMatch := (settings.OutlookRemindersWindowTitleTextToMatch).Value
 	showSystemTrayIcon := (settings.ShowIconInSystemTray).Value
 	showWindowsNotificationOnStartup := (settings.ShowWindowsNotificationOnStartup).Value
 	showWindowsNotificationAlert := (settings.ShowWindowsNotificationAlert).Value
@@ -374,6 +375,8 @@ ShowSettingsWindow(settingsFilePathParameter, settingsParameter, applicationVers
 	secondsBeforeAlertsAreReTriggeredWhenOutlookRemindersWindowIsStillOpen := (settings.SecondsBeforeAlertsAreReTriggeredWhenOutlookRemindersWindowIsStillOpen).Value
 	ensureOutlookRemindersWindowIsRestored := (settings.EnsureOutlookRemindersWindowIsRestored).Value
 	ensureOutlookRemindersWindowIsAlwaysOnTop := (settings.EnsureOutlookRemindersWindowIsAlwaysOnTop).Value
+	outlookRemindersWindowTitleTextToMatch := (settings.OutlookRemindersWindowTitleTextToMatch).Value
+	outlookProcessName := (settings.OutlookProcessName).Value
 
 	Gui 2:Default	; Specify that these controls are for window #2.
 
@@ -386,11 +389,8 @@ ShowSettingsWindow(settingsFilePathParameter, settingsParameter, applicationVers
 	transparentWindowAlertsAreDisabled := !showTransparentWindowAlert
 
 	; Add the controls to the GUI.
-	Gui, Add, GroupBox, x10 w525 r4, General Settings:	; r4 means 4 rows tall.
+	Gui, Add, GroupBox, x10 w525 r3, General Settings:	; r3 means 3 rows tall.
 		Gui, Add, Checkbox, yp+25 x20 vshowSystemTrayIcon gShowSystemTrayIconToggled Checked%showSystemTrayIcon%, Show icon in the system tray
-
-		Gui, Add, Text, yp+25 x20, Window title text to match against (default is "Reminder(s)"):
-		Gui, Add, Edit, x+5 r1 w200 voutlookRemindersWindowTitleTextToMatch, %outlookRemindersWindowTitleTextToMatch%
 
 		Gui, Add, Text, yp+25 x20, Seconds before alerts are re-triggered when Outlook reminder window is still open:
 		Gui, Add, Edit, x+5
@@ -423,6 +423,13 @@ ShowSettingsWindow(settingsFilePathParameter, settingsParameter, applicationVers
 		Gui, Add, Text, yp+25 x20, Milliseconds to show transparent window for
 		Gui, Add, Edit, x+5
 		Gui, Add, UpDown, yp+25 x20 vmillisecondsToShowTransparentWindowAlertFor Range1-60000 Disabled%transparentWindowAlertsAreDisabled%, %millisecondsToShowTransparentWindowAlertFor%
+
+	Gui, Add ,GroupBox, x10 w525 r3, Advanced:
+		Gui, Add, Text, yp+25 x20, Window title text to match against (default is "Reminder(s)"):
+		Gui, Add, Edit, x+5 r1 w200 voutlookRemindersWindowTitleTextToMatch, %outlookRemindersWindowTitleTextToMatch%
+
+		Gui, Add, Text, yp+25 x20, Outlook process name (default is "Outlook.exe"):
+		Gui, Add, Edit, x+5 r1 w200 voutlookProcessName, %outlookProcessName%
 
 	Gui, Add, Link, x10, <a href="https://github.com/deadlydog/NotifyWhenMicrosoftOutlookReminderWindowIsOpen">View project homepage and documentation</a>
 
@@ -481,7 +488,6 @@ ShowSettingsWindow(settingsFilePathParameter, settingsParameter, applicationVers
 
 	SettingsSaveButton:		; Settings Save button was clicked.
 		Gui 2:Submit, NoHide	; Get the values from the GUI controls without closing the GUI.
-		(settings.OutlookRemindersWindowTitleTextToMatch).Value := outlookRemindersWindowTitleTextToMatch
 		(settings.ShowIconInSystemTray).Value := showSystemTrayIcon
 		(settings.ShowWindowsNotificationOnStartup).Value := showWindowsNotificationOnStartup
 		(settings.ShowWindowsNotificationAlert).Value := showWindowsNotificationAlert
@@ -494,6 +500,8 @@ ShowSettingsWindow(settingsFilePathParameter, settingsParameter, applicationVers
 		(settings.SecondsBeforeAlertsAreReTriggeredWhenOutlookRemindersWindowIsStillOpen).Value := secondsBeforeAlertsAreReTriggeredWhenOutlookRemindersWindowIsStillOpen
 		(settings.EnsureOutlookRemindersWindowIsRestored).Value := ensureOutlookRemindersWindowIsRestored
 		(settings.EnsureOutlookRemindersWindowIsAlwaysOnTop).Value := ensureOutlookRemindersWindowIsAlwaysOnTop
+		(settings.OutlookRemindersWindowTitleTextToMatch).Value := outlookRemindersWindowTitleTextToMatch
+		(settings.OutlookProcessName).Value := outlookProcessName
 		(settings.PromptUserToViewSettingsFileOnStartup).Value := false	; The user has seen the settings, so we don't need to prompt them to see them again.
 		SaveSettingsToFile(settingsFilePath, settings)	; Save the settings before loading them again.
 		Reload	; Reload the script to apply the new settings.
