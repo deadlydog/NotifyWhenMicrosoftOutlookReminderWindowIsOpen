@@ -6,7 +6,7 @@
 *.ani
 *.ico
 
-# Don't commit the setings file that gets created.
+# Don't commit the settings file that gets created.
 *.ini
 
 # Don't commit and release binaries.
