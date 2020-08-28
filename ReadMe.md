@@ -34,8 +34,8 @@ You can also customize how often the alerts should trigger again if the Outlook 
 ### Older versions of Outlook
 
 Recent versions of Outlook have the text `Reminder(s)` in the reminders window that pops up.
-If you are using an older version of Outlook, or want to use this app to monitor a different application, you can change the `Window title text to match against` and `Outlook process name` in the settings.
-The alerts will trigger whenever a window with the specified text in it's title is open, and it belongs to a process with the matching process name.
+If you are using an older version of Outlook, or want to use this app to monitor a different application, you can adjust the `Window Detection Settings`.
+The alerts will trigger whenever a window whose title contains the specified text is open, and it belongs to a process with the matching process name.
 
 ## How To Run The App
 

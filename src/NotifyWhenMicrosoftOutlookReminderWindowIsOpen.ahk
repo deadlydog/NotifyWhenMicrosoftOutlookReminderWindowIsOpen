@@ -3,7 +3,7 @@
 ;==========================================================
 ; Constant Variables
 ;==========================================================
-ApplicationVersionNumber := "v1.1.0"
+ApplicationVersionNumber := "v1.1.1"
 AppResourcesDirectoryPath := A_ScriptDir . "\NotifyWhenMicrosoftOutlookReminderWindowIsOpenResources"
 AppTrayIconFilePath := AppResourcesDirectoryPath . "\AppIcon.ico"	; Define where to unpack the mouse cursor image file to.
 MouseCursorImageFilePath :=  AppResourcesDirectoryPath . "\MouseCursor.ani"	; Define where to unpack the mouse cursor image file to.
@@ -31,8 +31,8 @@ Settings.MillisecondsToShowTransparentWindowAlertFor := { Value: 3000, Category:
 Settings.SecondsBeforeAlertsAreReTriggeredWhenOutlookRemindersWindowIsStillOpen := { Value: 30, Category: "General" }
 Settings.EnsureOutlookRemindersWindowIsRestored := { Value: true, Category: "Outlook Reminders Window" }
 Settings.EnsureOutlookRemindersWindowIsAlwaysOnTop := { Value: true, Category: "Outlook Reminders Window" }
-Settings.OutlookRemindersWindowTitleTextToMatch := { Value: "Reminder(s)", Category: "Advanced" }
-Settings.OutlookProcessName := { Value: "Outlook.exe", Category: "Advanced" }
+Settings.OutlookRemindersWindowTitleTextToMatch := { Value: "Reminder(s)", Category: "Window Detection" }
+Settings.OutlookProcessName := { Value: "Outlook.exe", Category: "Window Detection" }
 Settings := LoadSettingsFromFileIfExistsOrCreateFile(SettingsFilePath, Settings)
 
 ;==========================================================
@@ -424,7 +424,7 @@ ShowSettingsWindow(settingsFilePathParameter, settingsParameter, applicationVers
 		Gui, Add, Edit, x+5
 		Gui, Add, UpDown, yp+25 x20 vmillisecondsToShowTransparentWindowAlertFor Range1-60000 Disabled%transparentWindowAlertsAreDisabled%, %millisecondsToShowTransparentWindowAlertFor%
 
-	Gui, Add ,GroupBox, x10 w525 r3, Advanced:
+	Gui, Add ,GroupBox, x10 w525 r3, Window Detection Settings:
 		Gui, Add, Text, yp+25 x20, Window title text to match against (default is "Reminder(s)"):
 		Gui, Add, Edit, x+5 r1 w200 voutlookRemindersWindowTitleTextToMatch, %outlookRemindersWindowTitleTextToMatch%
 
