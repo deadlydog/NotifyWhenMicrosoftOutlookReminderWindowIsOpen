@@ -66,6 +66,12 @@ The free [Outlook Better Reminders addin][OutlookBetterRemindersOutlookAddinGitH
 This script started from [this Stack Overflow answer][StackOverflowPostThatScriptStartedFromUrl].
 I just decided to add more features and make them customizable.
 
+## Donate
+
+Donate a twoonie or more for providing this extension open source and for free :)
+
+[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=7DDL257P2DN9A)
+
 <!-- Links -->
 [DownloadLatestVersionOfExecutableUrl]: https://github.com/deadlydog/NotifyWhenMicrosoftOutlookReminderWindowIsOpen/releases
 [HowToOpenStartupDirectoryInstructionsUrl]: https://www.thewindowsclub.com/startup-folder-in-windows-8
