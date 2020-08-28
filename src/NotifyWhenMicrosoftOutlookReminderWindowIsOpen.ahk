@@ -221,7 +221,7 @@ ShowAHKScriptIconInSystemTray(showIconInSystemTray)
 TriggerAlerts(settings, mouseCursorImageFilePath)
 {
 	; Copy required settings values into local variables to be easily used.
-	outlookRemindersWindowTitleTextToMatch := (Settings.OutlookRemindersWindowTitleTextToMatch).Value
+	outlookRemindersWindowTitleTextToMatch := (settings.OutlookRemindersWindowTitleTextToMatch).Value
 
 	if ((settings.EnsureOutlookRemindersWindowIsRestored).Value)
 	{
