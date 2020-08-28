@@ -78,7 +78,7 @@ Loop
 
 	; If the window was closed, clear any remaining alerts about the window having appeared.
 	outlookRemindersWindowId := GetOutlookRemindersWindowId(outlookRemindersWindowTitleTextToMatch, outlookProcessName)
-	outlookRemindersWindowWasClosed := outlookRemindersWindowId = 0
+	outlookRemindersWindowWasClosed := (outlookRemindersWindowId = 0)
 	if (outlookRemindersWindowWasClosed = true)
 	{
 		ClearAlerts()
