@@ -68,7 +68,7 @@ I just decided to add more features and make them customizable.
 
 ## Donate
 
-Donate a twoonie or more for providing this application open source and for free :)
+Donate a twoonie or more to me for providing this application open source and for free :)
 
 [![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=7DDL257P2DN9A)
 
