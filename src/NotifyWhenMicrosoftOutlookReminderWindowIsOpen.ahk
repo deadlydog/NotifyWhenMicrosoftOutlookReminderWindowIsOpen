@@ -3,12 +3,11 @@
 ;==========================================================
 ; Constant Variables
 ;==========================================================
-ApplicationVersionNumber := "v1.0.1"
+ApplicationVersionNumber := "v1.1.0"
 AppResourcesDirectoryPath := A_ScriptDir . "\NotifyWhenMicrosoftOutlookReminderWindowIsOpenResources"
 AppTrayIconFilePath := AppResourcesDirectoryPath . "\AppIcon.ico"	; Define where to unpack the mouse cursor image file to.
 MouseCursorImageFilePath :=  AppResourcesDirectoryPath . "\MouseCursor.ani"	; Define where to unpack the mouse cursor image file to.
 SettingsFilePath := AppResourcesDirectoryPath . "\Settings.ini"
-OutlookRemindersWindowTitleTextToMatch := "Reminder(s)"
 
 ;==========================================================
 ; Script Initialization
@@ -19,6 +18,7 @@ InitializeScript(AppResourcesDirectoryPath, AppTrayIconFilePath, MouseCursorImag
 ; Settings - Specify the default settings, then load any existing settings from the settings file.
 ;==========================================================
 Settings := {}	; Objects can be accessed with both associated array syntax (brackets) and object syntax (dots).
+Settings.OutlookRemindersWindowTitleTextToMatch := { Value: "Reminder(s)", Category: "General" }
 Settings.ShowIconInSystemTray := { Value: true, Category: "General" }
 Settings.PromptUserToViewSettingsFileOnStartup := { Value: false, Category: "Startup" }
 Settings.ShowWindowsNotificationOnStartup := { Value: true, Category: "Startup" }
@@ -53,17 +53,17 @@ SetTitleMatchMode 2	; Use "title contains text" mode to match windows.
 loop
 {
 	; Wait for the window to appear.
-	WinWait, %OutlookRemindersWindowTitleTextToMatch%,
+	WinWait, (Settings.OutlookRemindersWindowTitleTextToMatch).Value,
 
 	; Display any alerts about the window appearing.
-	TriggerAlerts(settings, OutlookRemindersWindowTitleTextToMatch, MouseCursorImageFilePath)
+	TriggerAlerts(Settings, MouseCursorImageFilePath)
 
 	; Wait for the window to close, or for the timeout period to elapse.
 	secondsToWaitForWindowToBeClosed := (Settings.SecondsBeforeAlertsAreReTriggeredWhenOutlookRemindersWindowIsStillOpen).Value
-	WinWaitClose, %OutlookRemindersWindowTitleTextToMatch%, , %secondsToWaitForWindowToBeClosed%
+	WinWaitClose, (Settings.OutlookRemindersWindowTitleTextToMatch).Value, , %secondsToWaitForWindowToBeClosed%
 
 	; If the window was closed, clear any remaining alerts about the window having appeared.
-	IfWinNotExist, %OutlookRemindersWindowTitleTextToMatch%
+	IfWinNotExist, (Settings.OutlookRemindersWindowTitleTextToMatch).Value
 	{
 		ClearAlerts()
 	}
@@ -215,16 +215,16 @@ ShowAHKScriptIconInSystemTray(showIconInSystemTray)
 	}
 }
 
-TriggerAlerts(settings, outlookRemindersWindowTitleTextToMatch, mouseCursorImageFilePath)
+TriggerAlerts(settings, mouseCursorImageFilePath)
 {
 	if ((settings.EnsureOutlookRemindersWindowIsRestored).Value)
 	{
-		WinRestore, %outlookRemindersWindowTitleTextToMatch%	; Make sure the window is not minized or maximized.
+		WinRestore, (settings.OutlookRemindersWindowTitleTextToMatch).Value	; Make sure the window is not minimized or maximized.
 	}
 
 	if ((settings.EnsureOutlookRemindersWindowIsAlwaysOnTop).Value)
 	{
-		WinSet, AlwaysOnTop, on, %outlookRemindersWindowTitleTextToMatch%
+		WinSet, AlwaysOnTop, on, (settings.OutlookRemindersWindowTitleTextToMatch).Value
 	}
 
 	if ((settings.ShowWindowsNotificationAlert).Value)
@@ -312,12 +312,13 @@ HideToolTip()
 ShowSettingsWindow(settingsFilePathParameter, settingsParameter, applicationVersionNumber)
 {
 	; Variables used for controls must be global, so define the global variables to use in the controls.
-	global settingsFilePath, settings, showSystemTrayIcon, showWindowsNotificationOnStartup, showWindowsNotificationAlert, playSoundOnWindowsNotificationAlert, showTooltipAlert, millisecondsToShowTooltipAlertFor, changeMouseCursorOnAlert, showTransparentWindowAlert, millisecondsToShowTransparentWindowAlertFor, secondsBeforeAlertsAreReTriggeredWhenOutlookRemindersWindowIsStillOpen, ensureOutlookRemindersWindowIsRestored, ensureOutlookRemindersWindowIsAlwaysOnTop
+	global settingsFilePath, settings, outlookRemindersWindowTitleTextToMatch, showSystemTrayIcon, showWindowsNotificationOnStartup, showWindowsNotificationAlert, playSoundOnWindowsNotificationAlert, showTooltipAlert, millisecondsToShowTooltipAlertFor, changeMouseCursorOnAlert, showTransparentWindowAlert, millisecondsToShowTransparentWindowAlertFor, secondsBeforeAlertsAreReTriggeredWhenOutlookRemindersWindowIsStillOpen, ensureOutlookRemindersWindowIsRestored, ensureOutlookRemindersWindowIsAlwaysOnTop
 
 	settingsFilePath := settingsFilePathParameter
 	settings := settingsParameter
 
 	; Get the values to show in the controls from the Settings.
+	outlookRemindersWindowTitleTextToMatch := (settings.OutlookRemindersWindowTitleTextToMatch).Value
 	showSystemTrayIcon := (settings.ShowIconInSystemTray).Value
 	showWindowsNotificationOnStartup := (settings.ShowWindowsNotificationOnStartup).Value
 	showWindowsNotificationAlert := (settings.ShowWindowsNotificationAlert).Value
@@ -342,8 +343,11 @@ ShowSettingsWindow(settingsFilePathParameter, settingsParameter, applicationVers
 	transparentWindowAlertsAreDisabled := !showTransparentWindowAlert
 
 	; Add the controls to the GUI.
-	Gui, Add ,GroupBox, x10 w525 r3, General Settings:	; r3 means 3 rows tall.
+	Gui, Add, GroupBox, x10 w525 r4, General Settings:	; r4 means 4 rows tall.
 		Gui, Add, Checkbox, yp+25 x20 vshowSystemTrayIcon gShowSystemTrayIconToggled Checked%showSystemTrayIcon%, Show icon in the system tray
+
+		Gui, Add, Text, yp+25 x20, Window title text to match against (default is "Reminder(s)"):
+		Gui, Add, Edit, x+5 r1 w200 voutlookRemindersWindowTitleTextToMatch, %outlookRemindersWindowTitleTextToMatch%
 
 		Gui, Add, Text, yp+25 x20, Seconds before alerts are re-triggered when Outlook reminder window is still open:
 		Gui, Add, Edit, x+5
@@ -428,6 +432,7 @@ ShowSettingsWindow(settingsFilePathParameter, settingsParameter, applicationVers
 
 	SettingsSaveButton:		; Settings Save button was clicked.
 		Gui 2:Submit, NoHide	; Get the values from the GUI controls without closing the GUI.
+		(settings.OutlookRemindersWindowTitleTextToMatch).Value := outlookRemindersWindowTitleTextToMatch
 		(settings.ShowIconInSystemTray).Value := showSystemTrayIcon
 		(settings.ShowWindowsNotificationOnStartup).Value := showWindowsNotificationOnStartup
 		(settings.ShowWindowsNotificationAlert).Value := showWindowsNotificationAlert
