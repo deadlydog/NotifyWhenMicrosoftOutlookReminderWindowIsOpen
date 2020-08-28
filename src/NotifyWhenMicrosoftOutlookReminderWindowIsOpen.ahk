@@ -387,6 +387,8 @@ ShowSettingsWindow(settingsFilePathParameter, settingsParameter, applicationVers
 		Gui, Add, Edit, x+5
 		Gui, Add, UpDown, yp+25 x20 vmillisecondsToShowTransparentWindowAlertFor Range1-60000 Disabled%transparentWindowAlertsAreDisabled%, %millisecondsToShowTransparentWindowAlertFor%
 
+	Gui, Add, Button, gOpenProjectUrlButton x315, Open project homepage and documentation
+
 	Gui, Add, Button, gSettingsCancelButton xm w100, Cancel
 	Gui, Add, Button, gRestoreDefaultSettingsButton x+200 w100, Restore Defaults
 	Gui, Add, Button, gSettingsSaveButton x+25 w100, Save
@@ -434,6 +436,10 @@ ShowSettingsWindow(settingsFilePathParameter, settingsParameter, applicationVers
 			GuiControl, Enable, millisecondsToShowTransparentWindowAlertFor
 		else
 			GuiControl, Disable, millisecondsToShowTransparentWindowAlertFor
+	return
+
+	OpenProjectUrlButton:	; Go to project URL button was clicked.
+		Run, https://github.com/deadlydog/NotifyWhenMicrosoftOutlookReminderWindowIsOpen
 	return
 
 	SettingsSaveButton:		; Settings Save button was clicked.
