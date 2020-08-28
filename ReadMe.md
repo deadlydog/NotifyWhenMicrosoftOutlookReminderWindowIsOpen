@@ -31,6 +31,12 @@ You can also customize how often the alerts should trigger again if the Outlook 
 
 ![Alerts Demo Gif][AlertsDemoGif]
 
+### Older versions of Outlook
+
+Recent versions of Outlook have the text `Reminder(s)` in the reminders window that pops up.
+If you are using an older version of Outlook, or want to use this app to monitor a different application, you can change the `Window title text to match against` in the settings.
+The alerts will trigger whenever a window with the specified text in it's title is open.
+
 ## How To Run The App
 
 Simply [download the executable][DownloadLatestVersionOfExecutableUrl] and run it.
