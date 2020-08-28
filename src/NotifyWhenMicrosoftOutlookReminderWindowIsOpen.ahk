@@ -50,23 +50,34 @@ SetTitleMatchMode 2	; Use "title contains text" mode to match windows.
 ;==========================================================
 ; Main Loop
 ;==========================================================
-loop
+Loop
 {
 	; Copy required settings values into local variables to be easily used.
 	outlookRemindersWindowTitleTextToMatch := (Settings.OutlookRemindersWindowTitleTextToMatch).Value
 	secondsToWaitForWindowToBeClosed := (Settings.SecondsBeforeAlertsAreReTriggeredWhenOutlookRemindersWindowIsStillOpen).Value
 
-	; Wait for the window to appear.
+	; Wait for a window with the matching Outlook reminders text in it's title to appear.
 	WinWait, %outlookRemindersWindowTitleTextToMatch%,
+
+	; Get the ID of the window if it does indeed belong to the Outlook process.
+	outlookRemindersWindowId := GetOutlookRemindersWindowId(outlookRemindersWindowTitleTextToMatch)
+
+	; If the found window doesn't belong to Outlook.exe, keep waiting for the actual Outlook reminders window.
+	if (outlookRemindersWindowId = 0)
+	{
+		continue
+	}
 
 	; Display any alerts about the window appearing.
 	TriggerAlerts(Settings, MouseCursorImageFilePath)
 
 	; Wait for the window to close, or for the timeout period to elapse.
-	WinWaitClose, %outlookRemindersWindowTitleTextToMatch%, , %secondsToWaitForWindowToBeClosed%
+	WinWaitClose, ahk_id %outlookRemindersWindowId%, , %secondsToWaitForWindowToBeClosed%
 
 	; If the window was closed, clear any remaining alerts about the window having appeared.
-	IfWinNotExist, %outlookRemindersWindowTitleTextToMatch%
+	outlookRemindersWindowId := GetOutlookRemindersWindowId(outlookRemindersWindowTitleTextToMatch)
+	outlookRemindersWindowWasClosed := outlookRemindersWindowId = 0
+	if (outlookRemindersWindowWasClosed = true)
 	{
 		ClearAlerts()
 	}
@@ -216,6 +227,32 @@ ShowAHKScriptIconInSystemTray(showIconInSystemTray)
 	{
 		Menu, Tray, NoIcon
 	}
+}
+
+GetOutlookRemindersWindowId(outlookRemindersWindowTitleTextToMatch)
+{
+	; Get all of the windows that belong to the Outlook.exe process to be sure the found window does.
+	WinGet, outlookWindowIds, List, ahk_exe Outlook.exe
+
+	; Get the ID of the found window.
+	WinGet, reminderWindowIds, List, %outlookRemindersWindowTitleTextToMatch%
+
+	; Determine if the found window belongs to the Outlook process or not.
+	outlookRemindersWindowId := 0
+	Loop, %outlookWindowIds%
+	{
+		outlookWindowId := outlookWindowIds%A_Index%
+		Loop, %reminderWindowIds%
+		{
+			reminderWindowId := reminderWindowIds%A_Index%
+			if (outlookWindowId = reminderWindowId)
+			{
+				outlookRemindersWindowId := reminderWindowId
+				break 2
+			}
+		}
+	}
+	return outlookRemindersWindowId
 }
 
 TriggerAlerts(settings, mouseCursorImageFilePath)
