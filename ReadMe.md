@@ -57,10 +57,7 @@ It will extract some additional resources to a `NotifyWhenMicrosoftOutlookRemind
 That's it.
 Now when you log into Windows the application should start automatically.
 
-## Limitations / Quirks
-
-- By default, this script triggers for any window with `Reminder(s)` in it's title, so if you saved a file with the name `I like Reminder(s).txt` and opened it in Notepad, this would trigger because that text will appear in the window's title.
-The specific text the app watches for (i.e. `Reminders(s)`) can be changed in the settings.
+## Other Considerations
 
 - The alerts in this app only fire when the Outlook Reminders window has been triggered by Outlook.
 Unfortunately, Outlook doesn't provide the ability to get reminded one or two minutes before the event; it only offers "5 minutes before start" and "0 minutes before start".
