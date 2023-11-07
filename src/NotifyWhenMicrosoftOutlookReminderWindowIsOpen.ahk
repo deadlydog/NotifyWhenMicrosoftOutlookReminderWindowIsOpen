@@ -58,15 +58,13 @@ Loop
 	outlookProcessName := (Settings.OutlookProcessName).Value
 	secondsToWaitForWindowToBeClosed := (Settings.SecondsBeforeAlertsAreReTriggeredWhenOutlookRemindersWindowIsStillOpen).Value
 
-	; Wait for a window with the matching Outlook reminders text in it's title to appear.
-	WinWait, %outlookRemindersWindowTitleTextToMatch%,
-
 	; Get the ID of the window if it does indeed belong to the Outlook process.
 	outlookRemindersWindowId := GetOutlookRemindersWindowId(outlookRemindersWindowTitleTextToMatch,outlookProcessName)
 
 	; If the found window doesn't belong to Outlook.exe, keep waiting for the actual Outlook reminders window.
 	if (outlookRemindersWindowId = 0)
 	{
+		Sleep, 10000
 		continue
 	}
 
