@@ -31,11 +31,19 @@ You can also customize how often the alerts should trigger again if the Outlook 
 
 ![Alerts Demo Gif][AlertsDemoGif]
 
-### Older versions of Outlook
+### Different versions of Outlook and other applications
 
-Recent versions of Outlook have the text `Reminder(s)` in the reminders window that pops up.
-If you are using an older version of Outlook, or want to use this app to monitor a different application, you can adjust the `Window Detection Settings`.
+If you are using the new version of Outlook, or want to use this app to monitor a different application, you can adjust the `Window Detection Settings`.
 The alerts will trigger whenever a window whose title contains the specified text is open, and it belongs to a process with the matching process name.
+
+| Outlook Version   | Window Title Text To Match | Process Name |
+| ----------------- | -------------------------- | ------------ |
+| Outlook (classic) | Reminder(s)                | Outlook.exe  |
+| Outlook (new)     | Reminders                  | olk.exe      |
+
+The settings are configured for `Outlook (classic)` by default.
+If you are using the new Outlook, you will need to update the Window Title Text To Match to `Reminders` and the Process Name to `olk.exe` in the settings.
+Similarly, if you are using a very old version of Outlook, you may need to update the Window Title Text To Match to what it uses in the Reminders window title.
 
 ## How To Run The App
 
